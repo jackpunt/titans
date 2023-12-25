@@ -20,7 +20,7 @@ class FileBase {
     cb: (fileHandleAry: any) => void, inText = method.substring(4, method.length - 6))
   {
     const picker = window[method]  // showSaveFilePicker showDirectoryPicker
-    const fsOpenButton = document.getElementById(this.buttonId)
+    const fsOpenButton = document.getElementById(this.buttonId) as HTMLElement; // must exist!
     fsOpenButton.innerText = inText
     fsOpenButton.onclick = () => {
       picker(options).then((value: any) => cb(value),
@@ -42,7 +42,7 @@ class FileBase {
  */
 export class LogWriter extends FileBase implements ILogWriter {
   /** when fulfilled, value is a WriteableFileStream; from createWriteable(). */
-  streamPromise: Promise<FileSystemWritableFileStream>;
+  streamPromise: Promise<FileSystemWritableFileStream> | undefined;
 
   /** WriteableFileStream Promise that is fulfilled when stream is open & ready for write */
   async openWriteStream(fileHandle: FileSystemFileHandle = this.fileHandle,
@@ -82,8 +82,8 @@ export class LogWriter extends FileBase implements ILogWriter {
       this.openWriteStream(fileHandle);
     }, 'SaveLog')
   }
-  fileName: string;
-  xfileName: string; // retain last fileName when file is closed
+  fileName?: string;
+  xfileName?: string; // retain last fileName when file is closed
 
   backlog: string[] = [];
   writeLine(text = '') {
@@ -107,7 +107,7 @@ export class LogWriter extends FileBase implements ILogWriter {
   async writeBacklog(thus = this) {
     //console.log(stime(this, ident), `Backlog:`, this.backlog.length, this.backlog)
     if (thus.backlog.length > 0) try {
-      const stream = await thus.streamPromise;     // indicates writeable is ready
+      const stream = await thus.streamPromise as FileSystemWritableFileStream;     // indicates writeable is ready
       const fileHandle = await thus.fileHandle.getFile();
       const size = fileHandle.size;
       const line0 = (size === 0) ? this.atZero : '';
@@ -138,7 +138,7 @@ export class LogWriter extends FileBase implements ILogWriter {
   }
 
   pickLogFile(name = this.name) {
-    const fsOpenButton = document.getElementById(this.buttonId)
+    const fsOpenButton = document.getElementById(this.buttonId) as HTMLElement;
     this.setButtonToSaveLog(name)
     fsOpenButton.click()
   }
@@ -162,7 +162,7 @@ export class LogReader extends FileBase  {
   }
 
   pickFileToRead() {
-    const fsOpenButton = document.getElementById(this.buttonId)
+    const fsOpenButton = document.getElementById(this.buttonId) as HTMLElement; // ASSERT: button element exists.
     let fileReadPromise = this.setButtonToReadFile()
     fsOpenButton.click();
     return fileReadPromise

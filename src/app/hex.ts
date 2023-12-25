@@ -5,6 +5,7 @@ import type { Meeple } from "./meeple";
 import { HexShape, LegalMark } from "./shapes";
 import { PlayerColor, TP } from "./table-params";
 import type { MapTile, Tile } from "./tile";
+import { NamedObject } from "./game-play";
 
 export const S_Resign = 'Hex@Resign'
 export const S_Skip = 'Hex@skip '
@@ -14,7 +15,8 @@ export type HexConstructor<T extends Hex> = new (map: HexMap<T>, row: number, co
 // Note: graphics.drawPolyStar(x,y,radius, sides, pointSize, angle) will do a regular polygon
 
 type LINKS<T extends Hex> = { [key in HexDir]?: T }
-type DCR    = { [key in "dc" | "dr"]: number }  // Delta for Col & Row
+//type DCR    = { [key in "dc" | "dr"]: number }  // Delta for Col & Row
+type DCR = { dc: number, dr: number };
 type TopoEW = { [key in EwDir]: DCR }
 type TopoNS = { [key in NsDir]: DCR }
 type Topo = TopoEW | TopoNS
@@ -89,12 +91,12 @@ export class Hex {
   get rcsp(): string { return (this.row >= 0) ? `[${this.rowsp},${this.colsp}]` : this.Aname.substring(4).padEnd(7)}
   /** compute ONCE, *after* HexMap is populated with all the Hex! */
   get rc_linear(): number { return this._rcLinear || (this._rcLinear = this.map.rcLinear(this.row, this.col))}
-  _rcLinear: number | undefined = undefined
+  _rcLinear?: number = undefined;
   /** accessor so Hex2 can override-advise */
   _district: number | undefined // district ID
   get district() { return this._district }
-  set district(d: number) {
-    this._district = d
+  set district(d: number | undefined) {
+    this._district = d;
   }
   get isOnMap() { return this.district !== undefined; } // also: (row !== undefined) && (col !== undefined)
 
@@ -111,30 +113,30 @@ export class Hex {
   get linkDirs() { return Object.keys(this.links) as HexDir[];}
 
   /** colorScheme(playerColor)@rcs */
-  toString(sc?: PlayerColor) {
-    return `${TP.colorScheme[sc] ?? 'Empty'}@${this.rcs}` // hex.toString => COLOR@[r,c] | COLOR@Skip , COLOR@Resign
+  toString() {
+    return `Hex@${this.rcs}` // hex.toString => Hex@[r,c] | Hex@Skip , Hex@Resign
   }
-  /** hex.rcspString => COLOR@[ r, c] | 'COLOR@Skip   ' , 'COLOR@Resign ' */
-  rcspString(sc?: PlayerColor) {
-    return `${TP.colorScheme[sc] ?? 'Empty'}@${this.rcsp}`
+  /** hex.rcspString => Hex@[ r, c] | 'Hex@Skip   ' , 'Hex@Resign ' */
+  rcspString() {
+    return `Hex@${this.rcsp}`
   }
 
   /** convert LINKS object to Array of Hex */
   get linkHexes() {
-    return Object.keys(this.links).map((dir: HexDir) => this.links[dir])
+    return (Object.keys(this.links) as HexDir[]).map((dir: HexDir) => this.links[dir])
   }
-  forEachLinkHex(func: (hex: Hex, dir: HexDir, hex0: Hex) => unknown, inclCenter = false) {
+  forEachLinkHex(func: (hex: Hex | undefined, dir: HexDir | undefined, hex0: Hex) => unknown, inclCenter = false) {
     if (inclCenter) func(this, undefined, this);
     this.linkDirs.forEach((dir: HexDir) => func(this.links[dir], dir, this));
   }
   /** return HexDir to the first linked hex that satisfies predicate. */
-  findLinkHex(pred: (hex: this, dir: HexDir, hex0: this) => boolean) {
+  findLinkHex(pred: (hex: this | undefined, dir: HexDir, hex0: this) => boolean) {
     return this.linkDirs.find((dir: HexDir) => pred(this.links[dir], dir, this));
   }
 
   /** continue in HexDir until pred is satisfied. */
   findInDir(dir: HexDir, pred: (hex: Hex, dir: HexDir, hex0: Hex) => boolean) {
-    let hex: Hex = this;
+    let hex: Hex | undefined = this;
     do {
        if (pred(hex, dir, this)) return hex;
     } while(!!(hex = hex.nextHex(dir)));
@@ -143,7 +145,7 @@ export class Hex {
 
   /** array of all hexes in line from dir. */
   hexesInDir(dir: HexDir, rv: this[] = []) {
-    let hex: this = this;
+    let hex: this | undefined = this;
     while (!!(hex = hex.links[dir])) rv.push(hex);
     return rv;
   }
@@ -154,13 +156,13 @@ export class Hex {
   }
 
   nextHex(ds: HexDir, ns: number = 1) {
-    let hex: Hex = this;
+    let hex: Hex | undefined = this;
     while (!!(hex = hex.links[ds]) && --ns > 0) {  }
     return hex;
   }
   /** return last Hex on axis in given direction */
   lastHex(ds: HexDir): Hex {
-    let hex: Hex = this, nhex: Hex
+    let hex: Hex = this, nhex: Hex | undefined;
     while (!!(nhex = hex.links[ds])) { hex = nhex }
     return hex
   }
@@ -178,24 +180,24 @@ export class Hex {
  */
 export class Hex1 extends Hex {
 
-  _tile: MapTile;
+  _tile: MapTile | undefined;
   get tile() { return this._tile; }
-  set tile(tile: Tile) { this._tile = tile; } // override in Hex2!
+  set tile(tile: Tile | undefined) { this._tile = tile; } // override in Hex2!
   // Note: set hex.tile mostly invoked from: tile.hex = hex;
 
-  _meep: Meeple;
+  _meep: Meeple | undefined;
   get meep() { return this._meep; }
-  set meep(meep: Meeple) { this._meep = meep }
+  set meep(meep: Meeple | undefined) { this._meep = meep }
 
-  get occupied(): [Tile, Meeple] { return (this.tile || this.meep) ? [this.tile, this.meep] : undefined; }
+  get occupied(): [Tile | undefined, Meeple | undefined] | undefined { return (this.tile || this.meep) ? [this.tile, this.meep] : undefined; }
 
   /** colorScheme(playerColor)@rcs */
   override toString(sc = this.tile?.player?.color || this.meep?.player?.color) {
-    return `${TP.colorScheme[sc] || 'Empty'}@${this.rcs}` // hex.toString => COLOR@[r,c] | COLOR@Skip , COLOR@Resign
+    return `${sc ?? 'Empty'}@${this.rcs}` // hex.toString => COLOR@[r,c] | COLOR@Skip , COLOR@Resign
   }
   /** hex.rcspString => COLOR@[ r, c] | 'COLOR@Skip   ' , 'COLOR@Resign ' */
-  override rcspString(sc = this.tile?.player.color || this.meep?.player?.color) {
-    return `${TP.colorScheme[sc] || 'Empty'}@${this.rcsp}`
+  override rcspString(sc = this.tile?.player?.color || this.meep?.player?.color) {
+    return `${sc ?? 'Empty'}@${this.rcsp}`
   }
 }
 
@@ -217,7 +219,7 @@ export class Hex2 extends Hex1 {
 
   // if override set, then must override get!
   override get district() { return this._district }
-  override set district(d: number) {
+  override set district(d: number | undefined) {
     this._district = d    // cannot use super.district = d [causes recursion, IIRC]
     this.distText.text = `${d}`
   }
@@ -235,7 +237,7 @@ export class Hex2 extends Hex1 {
         // so if we drop to the startHex, we have a collision.
         // Resolve by putting this_unit (the 'nextUnit') back in the source.
         // (availUnit will recurse to set this.unit = undefined)
-        this_unit.source.availUnit(this_unit);
+        this_unit.source.availUnit(this_unit as Tile); // Meeple extends Tile, but TS seems confused.
       } else if (k) debugger;
     }
     meep ? (super.meep = unit as Meeple) : (super.tile = unit); // set _meep or _tile;
@@ -248,10 +250,10 @@ export class Hex2 extends Hex1 {
   }
 
   override get tile() { return super.tile; }
-  override set tile(tile: Tile) { this.setUnit(tile, false)}
+  override set tile(tile: Tile | undefined) { this.setUnit(tile as Tile, false)}
 
   override get meep() { return super.meep; }
-  override set meep(meep: Meeple) { this.setUnit(meep, true)}
+  override set meep(meep: Meeple | undefined) { this.setUnit(meep as Tile, true)}
 
   /**
    * add Hex2 to map?.mapCont.hexCont; not in map.hexAry!
@@ -330,10 +332,13 @@ export class Hex2 extends Hex1 {
     let dx = tx - hx, dy = ty - hy
     return Math.sqrt(dx * dx + dy * dy); // tw == H.sqrt3
   }
-  /** location of corner between dir0 and dir1; in parent coordinates. */
+  /** location of corner between dir0 and dir1; in parent coordinates.
+   * @param dir0 an EwDir
+   * @param dir1 an EwDir
+   */
   // hexmarket uses to find ewDir corner between two nsDir edges.
   cornerPoint(dir0: HexDir, dir1: HexDir) {
-    let d0 = H.ewDirRot[dir0], d1 = H.ewDirRot[dir1]
+    const d0 = H.ewDirRot[dir0 as EwDir], d1 = H.ewDirRot[dir1 as EwDir];
     let a2 = (d0 + d1) / 2, h = this.radius
     if (Math.abs(d0 - d1) > 180) a2 += 180
     let a = a2 * H.degToRadians
@@ -341,7 +346,7 @@ export class Hex2 extends Hex1 {
   }
   /** location of edge point in dir; in parent coordinates. */
   edgePoint(dir: HexDir) {
-    let a = H.ewDirRot[dir] * H.degToRadians, h = this.radius * H.sqrt3_2
+    let a = H.ewDirRot[dir as EwDir] * H.degToRadians, h = this.radius * H.sqrt3_2
     return new Point(this.x + Math.sin(a) * h, this.y - Math.cos(a) * h)
   }
 }
@@ -394,7 +399,7 @@ export class MapCont extends Container {
     super()
     this.name = 'mapCont';
   }
-  static cNames = ['resaCont', 'hexCont', 'infCont', 'tileCont', 'markCont', 'capCont', 'counterCont', 'eventCont'];
+  static cNames = ['resaCont', 'hexCont', 'infCont', 'tileCont', 'markCont', 'capCont', 'counterCont', 'eventCont'] as const;
   resaCont: Container    // playerPanels
   hexCont: Container     // hex shapes on bottom stats: addChild(dsText), parent.rotation
   infCont: Container     // infMark below tileCont; Hex2.showInf
@@ -403,6 +408,16 @@ export class MapCont extends Container {
   capCont: Container     // for tile.capMark
   counterCont: Container // counters for AuctionCont
   eventCont: Container   // the eventHex & and whatever Tile is on it...
+
+  /** add all the layers of Containers. */
+  addContainers() {
+    MapCont.cNames.forEach(cname => {
+      const cont = new Container();
+      (cont as NamedObject).Aname = cont.name = cname;
+      this[cname] = cont;
+      this.addChild(cont);
+    })
+  }
 }
 
 export interface HexM<T extends Hex> {
@@ -449,13 +464,13 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   /** return this.centerHex.xywh() for this.topo */
   get xywh() { return this.centerHex.xywh(undefined, TP.useEwTopo); }
 
-  private minCol: number | undefined = undefined               // Array.forEach does not look at negative indices!
-  private maxCol: number | undefined = undefined               // used by rcLinear
-  private minRow: number | undefined = undefined               // to find centerHex
-  private maxRow: number | undefined = undefined               // to find centerHex
+  private minCol?: number = undefined               // Array.forEach does not look at negative indices!
+  private maxCol?: number = undefined               // used by rcLinear
+  private minRow?: number = undefined               // to find centerHex
+  private maxRow?: number = undefined               // to find centerHex
   get centerHex() {
-    let cr = Math.floor((this.maxRow + this.minRow) / 2)
-    let cc = Math.floor((this.minCol + this.maxCol) / 2);
+    let cr = Math.floor(((this.maxRow ?? 0) + (this.minRow ?? 0)) / 2)
+    let cc = Math.floor(((this.minCol ?? 0) + (this.maxCol ?? 0)) / 2);
     return this[cr][cc]; // as Hex2; as T;
   }
   getCornerHex(dn: HexDir) {
@@ -473,13 +488,14 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
    *
    * Basic map is non-GUI, addToMapCont uses Hex2 elements to enable GUI interaction.
    * @param addToMapCont use Hex2 for Hex, make Containers: hexCont, infCont, markCont, stoneCont
+   * @param hexC Constructor<T> for the Hex elements (typed as HexConstructor<Hex> for Typescript...)
    */
-  constructor(radius: number = TP.hexRad, addToMapCont = false, public hexC?: HexConstructor<T>) {
+  constructor(radius: number = TP.hexRad, addToMapCont = false,
+      public hexC: HexConstructor<Hex> = Hex) //
+  {
     super(); // Array<Array<Hex>>()
     this.radius = radius;
-    // ((...args: any[]) => new Hex(args[0], args[1], args[2]) as T);
-    this.hexC = hexC ?? (Hex as any as HexConstructor<T>);
-    if (addToMapCont) this.addToMapCont(this.hexC);
+    if (addToMapCont) this.addToMapCont(this.hexC as Constructor<T>);
   }
 
   // the 'tilt' to apply to a HexShape to align with map.topo:
@@ -494,13 +510,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   addToMapCont(hexC?: Constructor<T>): this {
     if (hexC) this.hexC = hexC;
     this.mark = this.makeMark();
-    const mapCont = this.mapCont;
-    MapCont.cNames.forEach(cname => {
-      const cont = new Container();
-      mapCont[cname] = cont;
-      cont[S.Aname] = cont.name = cname;
-      mapCont.addChild(cont);
-    })
+    this.mapCont.addContainers();
     return this
   }
 
@@ -511,7 +521,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   }
 
   /** to build this HexMap: create Hex (or Hex2) and link it to neighbors. */
-  addHex(row: number, col: number, district: number, hexC: Constructor<T> = this.hexC ): T {
+  addHex(row: number, col: number, district: number, hexC = this.hexC as Constructor<T>): T {
     // If we have an on-screen Container, then use Hex2: (addToMapCont *before* makeAllDistricts)
     const hex = new hexC(this, row, col);
     hex.district = district // and set Hex2.districtText
@@ -533,11 +543,11 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   }
 
   /** find first Hex matching the given predicate function */
-  findHex<K extends T>(fn: (hex: K) => boolean): K {
+  findHex<K extends T>(fn: (hex: K) => boolean): K | undefined {
     for (let hexRow of this) {
       if (hexRow === undefined) continue
-      const found = hexRow.find((hex: K) => hex && fn(hex)) as K
-      if (found !== undefined) return found
+      const found = hexRow.find((hex: T) => hex && fn(hex as K)) as K;
+      if (found !== undefined) return found;
     }
     return undefined;
   }
@@ -565,7 +575,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
 
   /** make this.mark visible above the given Hex */
   showMark(hex?: Hex) {
-    const mark = this.mark
+    const mark = this.mark as HexMark;
     if (!hex) {  // || hex.Aname === S_Skip || hex.Aname === S_Resign) {
       mark.visible = false;
     } else if (hex instanceof Hex2) {
@@ -587,7 +597,8 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   }
 
   nextRowCol(hex: RC, dir: HexDir, nt: Topo = this.topo(hex)): RC {
-    let row = hex.row + nt[dir].dr, col = hex.col + nt[dir].dc
+    const { dr, dc } = (nt as TopoNS)[dir as NsDir]; // OR (nt as TopoEW[dir as EwDir]) OR simply: nt[dir]
+    let row = hex.row + dr, col = hex.col + dc;
     return { row, col }
   }
 
@@ -595,8 +606,9 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   link(hex: T, rc: RC = hex, map: T[][] = this, nt: Topo = this.topo(rc), lf: (hex: T) => LINKS<T> = (hex) => hex.links) {
     const topoDirs = Object.keys(nt) as Array<HexDir>
     topoDirs.forEach(dir => {
-      const nr = rc.row + nt[dir].dr;
-      const nc = rc.col + nt[dir].dc;
+      const { dr, dc } = (nt as TopoNS)[dir as NsDir]; // OR (nt as TopoEW[dir as EwDir])
+      const nr = rc.row + dr;
+      const nc = rc.col + dc;
       const nHex = map[nr] && map[nr][nc]
       if (!!nHex) {
         lf(hex)[dir] = nHex
@@ -612,7 +624,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
    * @param legal - returnn ONLY hex with LegalMark visible & mouseenabled.
    * @returns the Hex2 under mouse or undefined, if not a Hex (background)
    */
-  hexUnderPoint(x: number, y: number, legal = true): T {
+  hexUnderPoint(x: number, y: number, legal = true): T | undefined {
     const mark = this.mapCont.markCont.getObjectUnderPoint(x, y, 1);
     // Note: in theory, mark could be on a Hex2 that is NOT in hexCont!
     if (mark instanceof LegalMark) return mark.hex2 as any as T;
@@ -651,7 +663,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
         if (nhex.district != hex.district) { adjColor.push(nhex.distColor); return }
       }
     })
-    return HexMap.distColor.find(ci => !adjColor.includes(ci))
+    return HexMap.distColor.find(ci => !adjColor.includes(ci)) ?? 'white'; // or undefined or ...
   }
   /**
    * rings of Hex with EwTopo; HexShape(tilt = 'NE')
@@ -677,7 +689,8 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
       return ic
     }
     const row0 = irow(mr, mc), col0 = icol(mr, mc, row0);
-    const hexAry = Array<T>(); hexAry['Mr'] = mr; hexAry['Mc'] = mc;
+    const hexAry: T[] & { Mr?: number, Mc?: number } = Array<T>();
+    hexAry['Mr'] = mr; hexAry['Mc'] = mc;
     const hex = this.addHex(row0, col0, district);
     hexAry.push(hex) // The *center* hex
     let rc: RC = { row: row0, col: col0 } // == {hex.row, hex.col}

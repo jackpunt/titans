@@ -4,8 +4,8 @@ export type XY = { x: number, y: number }; // less than a Point
 /** Font things */
 export namespace F {
   export function fontSpec(size: number = 32, font: string = S.defaultFont) { return `${size}px ${font}` }
-  export function timedPromise<T>(ms: number, v?: T): Promise<T> {
-    return new Promise((res, rej) => setTimeout(()=>res(v), ms))
+  export function timedPromise<T>(ms: number, v: T): Promise<T> {
+    return new Promise((res, rej) => setTimeout(() => res(v), ms))
   }
 }
 
@@ -187,8 +187,8 @@ export class Obj {
   /** like Object.fromEntries(...[string, any])
    * @param rv supply empty object (of prototype)
    */
-  static fromEntries<T extends object>(ary: [string, any][], rv:T = {} as T): T {
-    ary.forEach(([k, v]) => { rv[k] = v }) // QQQQ: is Object.fromEntries() sufficient? is it just <T>?
+  static fromEntries<T extends Object>(ary: [string, any][], rv: T = {} as T): T {
+    ary.forEach(([k, v]) => { (rv as { [index: string]: any })[k] = v }) // QQQQ: is Object.fromEntries() sufficient? is it just <T>?
     return rv
   }
   /** clone: make a shallow copy of obj, using Obj.fromEntries(ary, rv?:T) */

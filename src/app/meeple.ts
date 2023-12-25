@@ -67,7 +67,7 @@ export class Meeple extends Tile {
   /** the map Hex on which this Meeple sits. */
   override get hex() { return this._hex; }
   /** only one Meep on a Hex, Meep on only one Hex */
-  override set hex(hex: Hex1) {
+  override set hex(hex: Hex1 | undefined) {
     if (this.hex?.meep === this) this.hex.meep = undefined
     this._hex = hex
     if (hex !== undefined) hex.meep = this;
@@ -75,11 +75,11 @@ export class Meeple extends Tile {
 
   override get radius() { return TP.meepleRad } // 31.578 vs 60*.4 = 24
   override textVis(v: boolean) { super.textVis(true); }
-  override makeShape() { return new MeepleShape(this.player, this.radius); }
+  override makeShape() { return new MeepleShape(this.player as Player, this.radius); }
   declare baseShape: MeepleShape;
 
   /** location at start-of-turn; for Meeples.unMove() */
-  startHex: Hex1;
+  startHex?: Hex1;
 
   // we need to unMove meeples in the proper order; lest we get 2 meeps on a hex.
   // meepA -> hexC, meepB -> hexA; undo: meepA -> hexA (collides with meepB), meepB -> hexB
@@ -90,7 +90,7 @@ export class Meeple extends Tile {
   unMove() {
     if (this.hex === this.startHex) return;
     this.placeTile(undefined, false);       // take meepA off the map;
-    this.startHex.meep?.unMove();           // recurse to move meepB to meepB.startHex
+    this.startHex!.meep?.unMove();          // recurse to move meepB to meepB.startHex
     this.placeTile(this.startHex, false);   // Move & update influence; Note: no unMove for Hire! (sendHome)
     this.faceUp();
   }
@@ -122,7 +122,7 @@ export class Meeple extends Tile {
     return undefined;
   }
 
-  isOnLine(hex0: Hex1, fromHex = this.hex) {
+  isOnLine(hex0: Hex1, fromHex = this.hex as Hex1) {
     return !!fromHex.linkDirs.find(dir => fromHex.hexesInDir(dir).includes(hex0));
     // return !!fromHex.linkDirs.find(dir => fromHex.findInDir(dir, hex => hex === hex0));
     // return !!fromHex.findLinkHex((hex, dir) => !!hex.findInDir(dir, hex => hex === hex0));

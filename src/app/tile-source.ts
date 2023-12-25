@@ -17,7 +17,7 @@ export class TileSource<T extends Tile> {
   readonly Aname: string
   private readonly allUnits: T[] = new Array<T>();
   private readonly available: T[] = new Array<T>();
-  readonly counter?: NumCounter;   // counter of available units.
+  readonly counter: NumCounter;   // counter of available units.
 
   constructor(
     public readonly type: Constructor<T>,

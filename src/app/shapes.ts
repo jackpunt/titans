@@ -17,8 +17,10 @@ export interface Paintable extends DisplayObject {
   paint(colorn: string, force?: boolean): Graphics;
 }
 
-/** Create/Color Graphics Function (color, g0); extend graphics with additional instructions. */
-export type CGF = (color?: string, g?: Graphics) => Graphics;
+/** Create/Color Graphics Function (color, g0); extend graphics with additional instructions.
+ * g0 is clone of "baseline" Graphics. (may be clear)
+ */
+export type CGF = (color: string, g?: Graphics) => Graphics;
 
 /**
  * Usage: ??? [obsolete?]
@@ -34,13 +36,19 @@ export type CGF = (color?: string, g?: Graphics) => Graphics;
  */
 
 export class PaintableShape extends Shape implements Paintable {
+  /** initial/baseline Graphics, clone to create cgfGraphics */
+  g0: Graphics;
+  /** previous/current Graphics that were rendered. (optimization... paint(color, true) to overrixe) */
+  cgfGraphics: Graphics; // points to this.graphics after cgf runs.
   /**
    *
    * @param _cgf Create Graphics Function
    * @param colorn paint with this color
+   * @param g0 Graphics to clone (or create); used as baseline Graphics for each paint()
    */
-  constructor(public _cgf: CGF, public colorn?: string) {
+  constructor(public _cgf: CGF, public colorn: string = C.BLACK, g0?: Graphics) {
     super();
+    this.g0 = g0?.clone() ?? new Graphics(); // clone, because original is NOT immutable.
     this.name = className(this);
   }
   updateCacheInPaint = true;      // except for unusual cases
@@ -52,14 +60,12 @@ export class PaintableShape extends Shape implements Paintable {
       this.paint(this.colorn, true);
     }
   }
-  /** previous/current Graphics that were rendered. (optimization... paint(color, true) to overrixe) */
-  cgfGraphics: Graphics;
   /** render graphics from cgf. */
   paint(colorn: string = this.colorn, force = false): Graphics {
     if (force || this.graphics !== this.cgfGraphics || this.colorn !== colorn) {
       // need to repaint, even if same color:
-      this.graphics.clear();
-      this.graphics = this.cgfGraphics = this.cgf(this.colorn = colorn);
+      this.graphics = this.g0.clone();  // reset to initial Graphics.
+      this.graphics = this.cgfGraphics = this.cgf(this.colorn = colorn); // apply this.cgf(color)
       if (this.updateCacheInPaint && this.cacheID) this.updateCache();
     }
     return this.graphics;
@@ -102,7 +108,6 @@ export class HexShape extends PaintableShape {
 
 
 export class EllipseShape extends PaintableShape {
-  g0: Graphics;
   /**
    * ellipse centered on (0,0), axis is NS/EW, rotate after.
    * @param radx radius in x dir
@@ -110,12 +115,12 @@ export class EllipseShape extends PaintableShape {
    * retain g0, to use as baseline Graphics for each paint()
    */
   constructor(public fillc = C.white, public radx = 30, public rady = 30, public strokec = C.black, g0?: Graphics) {
-    super((fillc) => this.cscgf(fillc));
-    this.g0 = g0?.clone();
+    super((fillc) => this.cscgf(fillc), strokec, g0);
+    this._cgf = this.cscgf; // overwrite to remove indirection...
     this.paint(fillc);
   }
 
-  cscgf(fillc: string, g = this.g0?.clone() ?? new Graphics()) {
+  cscgf(fillc: string, g = this.g0.clone()) {
     ((this.fillc = fillc) ? g.f(fillc) : g.ef());
     (this.strokec ? g.s(this.strokec) : g.es());
     g.de(-this.radx, -this.rady, 2 * this.radx, 2 * this.rady);  // easlejs can determine Bounds of Ellipse
@@ -129,17 +134,15 @@ export class EllipseShape extends PaintableShape {
  * retain g0, to use as baseline Graphics for each paint()
  */
 export class CircleShape extends EllipseShape {
-  /** retain g0, to use as baseline Graphics for each paint() */
   constructor(fillc = C.white, rad = 30, strokec = C.black, g0?: Graphics) {
     super(fillc, rad, rad, strokec, g0);
   }
 }
 
 export class PolyShape extends PaintableShape {
-  g0: Graphics;
   constructor(public nsides = 4, public tilt = 0, public fillc = C.white, public rad = 30, public strokec = C.black, g0?: Graphics) {
-    super((fillc) => this.pscgf(fillc));
-    this.g0 = g0?.clone();
+    super((fillc) => this.pscgf(fillc), fillc, g0);
+    this._cgf = this.pscgf;
     this.paint(fillc);
   }
 
@@ -172,7 +175,6 @@ export class RectShape extends PaintableShape {
     return RectShape.rectWHXY(w, h, -x, -h / 2, g0);
   }
 
-  g0: Graphics;    // cgf prepends g0 generate to this.Graphics.
   rect: XYWH;
   rc: number = 0;
   constructor(
@@ -181,7 +183,8 @@ export class RectShape extends PaintableShape {
     public strokec = C.black,
     g0?: Graphics,
   ) {
-    super((fillc) => this.rscgf(fillc as string));
+    super((fillc) => this.rscgf(fillc as string), fillc, g0);
+    this._cgf = this.rscgf;
     this.rect = { x, y, w, h };
     this.setBounds(x, y, w, h);
     this.rc = r;

@@ -12,8 +12,8 @@ import { CenterText } from "@thegraid/easeljs-lib";
 
 
 class TileLoader {
-  Uname = ['Univ0', 'Univ1'];
-  aliases = { Monument1: 'arc_de_triomphe3', Monument2: 'Statue-of-liberty' };
+  Uname = ['Univ0', 'Univ1']; // from citymap
+  aliases: { [key: string]: string } = { Monument1: 'arc_de_triomphe3', Monument2: 'Statue-of-liberty' }
   fromAlias(names: string[]) {
     return names.map(name => this.aliases[name] ?? name);
   }
@@ -26,7 +26,7 @@ class TileLoader {
   imageLoader: ImageLoader;
   /** use ImageLoader to load images, THEN invoke callback. */
   loadImages(cb?: () => void) {
-    this.imageLoader = new ImageLoader(this.imageArgs, (imap) => cb());
+    this.imageLoader = new ImageLoader(this.imageArgs, (imap) => cb?.());
   }
   getImage(name: string) {
     return this.imageLoader.imap.get(this.aliases[name] ?? name);
@@ -40,13 +40,13 @@ class Tile0 extends Container {
   // constructor() { super(); }
 
   public gamePlay = Tile.gamePlay;
-  public player: Player | undefined;
+  public player?: Player;
   get pColor() { return this.player?.color }
   get recycleVerb(): string { return 'demolished'; }
 
   /** name in set of filenames loaded in GameSetup */
   addImageBitmap(name: string, at = this.numChildren - 1) {
-    const img = Tile0.loader.getImage(name), bm = new Bitmap(img);
+    const img = Tile0.loader.getImage(name) as HTMLImageElement, bm = new Bitmap(img);
     const width = TP.hexRad, scale = width / Math.max(img.height, img.width);
     bm.scaleX = bm.scaleY = scale;
     const sw = img.width * scale, sh = img.height * scale;
@@ -90,18 +90,17 @@ export class Tile extends Tile0 implements Dragable {
 
   static makeSource0<T extends Tile, TS extends TileSource<T>>(
     unitSource: new (type: Constructor<Tile>, p: Player, hex: Hex2) => TS,
-    type: Constructor<T>,
+    // IF (per-player) static source: TileSource[] ELSE static source: TileSource
+    type: Constructor<T> & { source: TileSource<T>[] | TileSource<T> },
     player: Player,
     hex: Hex2,
     n = 0,
   ) {
     const source = new unitSource(type, player, hex);
     if (player) {
-      // static source: TS = [];
-      type['source'][player.index] = source;
+      (type.source as TileSource<T>[])[player.index] = source;
     } else {
-      // static source: TS;
-      type['source'] = source;
+      (type.source as TileSource<T>) = source;
     }
     // Create initial Tile/Units:
     for (let i = 0; i < n; i++) {
@@ -146,16 +145,16 @@ export class Tile extends Tile0 implements Dragable {
   // get fR() { return 0; }
 
   /** location at start-of-game & after-Recycle; Meeple & Civic; Policy: sendHome -> sendToBag */
-  homeHex: Hex1 = undefined;
+  homeHex!: Hex1;
   /** location at start-of-drag */
   fromHex: Hex2;
   isDragable(ctx?: DragContext) { return true; }
 
-  _hex: Hex1 = undefined;
+  _hex: Hex1 | undefined;
   /** the map Hex on which this Tile sits. */
   get hex() { return this._hex; }
   /** only one Tile on a Hex, Tile on only one Hex */
-  set hex(hex: Hex1) {
+  set hex(hex: Hex1 | undefined) {
     if (this.hex?.tile === this) this.hex.tile = undefined;
     this._hex = hex;
     if (hex !== undefined) hex.tile = this;
@@ -166,7 +165,7 @@ export class Tile extends Tile0 implements Dragable {
     super.updateCache(compositeOperation)
   }
 
-  setPlayerAndPaint(player: Player) {
+  setPlayerAndPaint(player: Player | undefined) {
     this.player = player;
     this.paint(undefined, player?.color);
     return this;
@@ -186,7 +185,7 @@ export class Tile extends Tile0 implements Dragable {
     return bm;
   }
 
-  addTextChild(y0 = this.radius / 2, text = this.Aname.replace(/-/g, '\n'), size = Tile.textSize, vis = false) {
+  addTextChild(y0 = this.radius / 2, text = this.Aname?.replace(/-/g, '\n'), size = Tile.textSize, vis = false) {
     const nameText = new CenterText(text, size);
     nameText.y = y0;         // Meeple overrides in constructor!
     nameText.visible = vis;
@@ -208,7 +207,7 @@ export class Tile extends Tile0 implements Dragable {
         nevt.stopImmediatePropagation(); // TODO: prevent Dragger.clickToDrag() when button !== 0
       }
     };
-    this.on(S.click, ifRightClick, this, false, {}, true);
+    this.on(S.click, ifRightClick as any, this, false, {}, true); // TS fails with overload
   }
 
   onRightClick(evt: MouseEvent) {
@@ -225,7 +224,7 @@ export class Tile extends Tile0 implements Dragable {
    *
    * calls this.source.nextUnit() if tile was dragged from this.source.
    */
-  moveTo(hex: Hex1) {
+  moveTo(hex: Hex1 | undefined) {
     const fromHex = this.fromHex;
     this.hex = hex;       // may collide with source.hex.meep, setUnit, overSet?
     if (this.source && fromHex === this.source.hex && fromHex !== hex) {
@@ -234,7 +233,7 @@ export class Tile extends Tile0 implements Dragable {
   }
 
   /** Tile.dropFunc() --> placeTile (to Map, reserve, ~>auction; not Recycle); semantic move/action. */
-  placeTile(toHex: Hex1, payCost = false) {
+  placeTile(toHex: Hex1 | undefined, payCost = false) {
     this.gamePlay.placeEither(this, toHex, payCost);
   }
 
@@ -257,7 +256,7 @@ export class Tile extends Tile0 implements Dragable {
     }
   }
 
-  showTargetMark(hex: Hex2, ctx: DragContext) {
+  showTargetMark(hex: Hex2 | undefined, ctx: DragContext) {
     ctx.targetHex = hex?.isLegal ? hex : this.fromHex;
     ctx.targetHex?.map.showMark(ctx.targetHex);
   }
@@ -268,7 +267,7 @@ export class Tile extends Tile0 implements Dragable {
    * isLegal already set;
    * record ctx.targetHex & showMark() when Tile is over a legal targetHex.
    */
-  dragFunc0(hex: Hex2, ctx: DragContext) {
+  dragFunc0(hex: Hex2 | undefined, ctx: DragContext) {
     this.showTargetMark(hex, ctx);
   }
 
@@ -278,7 +277,7 @@ export class Tile extends Tile0 implements Dragable {
     ctx.targetHex?.map.showMark(undefined); // if (this.fromHex === undefined)
   }
 
-  cantBeMovedBy(player: Player, ctx: DragContext): string | boolean {
+  cantBeMovedBy(player: Player, ctx: DragContext): string | boolean | undefined {
     return (ctx?.lastShift || this.player === undefined || this.player === player) ? undefined : "Not your Tile";
   }
 
@@ -286,7 +285,7 @@ export class Tile extends Tile0 implements Dragable {
   dragStart(ctx: DragContext) {  }
 
   /** state of shiftKey has changed during drag */
-  dragShift(shiftKey: boolean, ctx: DragContext) { }
+  dragShift(shiftKey: boolean | undefined, ctx: DragContext) { }
 
   markLegal(table: Table, setLegal = (hex: Hex2) => { hex.isLegal = false; }, ctx?: DragContext) {
     table.newHexes.forEach(setLegal);
@@ -302,8 +301,6 @@ export class Tile extends Tile0 implements Dragable {
     if (!!toHex.tile) return false; // note: from AuctionHexes to Reserve overrides this.
     if (toHex.meep && !(toHex.meep.player === this.gamePlay.curPlayer)) return false; // QQQ: can place on non-player meep?
     if ((this.hex as Hex2)?.isOnMap && !ctx?.lastShift) return false;
-    // [newly] placed tile must be adjacent to an existing [non-BonusTile] Tile:
-    if (TP.placeAdjacent && toHex.isOnMap && !toHex.findLinkHex(hex => (hex.tile?.player !== undefined ))) return false;
     return true;
   }
 

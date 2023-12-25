@@ -40,7 +40,7 @@ export class TextLog extends Container {
     if (line === this.lastLine) {
       this.lines[this.lines.length - 1].text = `[${++this.nReps}] ${line}`;
     } else {
-      this.removeChild(this.lines.shift());
+      this.removeChild(this.lines.shift() as Text);
       this.lines.push(this.addChild(this.newText(line)));
       this.spaceLines();
       this.lastLine = line;
