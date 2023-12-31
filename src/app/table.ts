@@ -1,6 +1,7 @@
 import { AT, C, CenterText, Constructor, Dragger, DragInfo, F, KeyBinder, S, ScaleableContainer, stime, XY } from "@thegraid/easeljs-lib";
 import { Container, DisplayObject, EventDispatcher, Graphics, MouseEvent, Shape, Stage, Text } from "@thegraid/easeljs-module";
 import { NamedObject, type GamePlay } from "./game-play";
+import type { GameState } from "./game-state";
 import { Hex, Hex2, HexMap, IHex } from "./hex";
 import { H, XYWH } from "./hex-intfs";
 import { Player } from "./player";
@@ -40,6 +41,7 @@ export interface DragContext {
   info: MinDragInfo;    // we only use { first, event }
   tile?: Tile;          // the DisplayObject being dragged
   nLegal: number;      // number of legal drop tiles (excluding recycle)
+  gameState?: GameState;// gamePlay.gameState
   phase?: string;       // keysof GameState.states
 }
 
@@ -404,7 +406,31 @@ export class Table extends EventDispatcher  {
     return rHex;
   }
 
-  doneClicked(evt?: Object) {
+
+  doneButton: UtilButton;
+  doneClicked = (evt?: any) => {
+    this.doneButton.visible = false;
+    this.gamePlay.phaseDone();   // <--- main doneButton does not supply 'panel'
+  }
+  addDoneButton(actionCont: Container, rh: number) {
+    const w = 90, h = 56;
+    const doneButton = this.doneButton = new UtilButton('lightgreen', 'Done', 36, C.black);
+    doneButton.name = 'doneButton';
+    doneButton.x = -(w);
+    doneButton.y = 3 * rh;
+    doneButton.label.textAlign = 'right';
+    doneButton.on(S.click, this.doneClicked, this);
+    actionCont.addChild(doneButton);
+
+    // prefix advice: set text color
+    const o_cgf = doneButton.shape.cgf;
+    const cgf = (color: string) => {
+      const tcolor = (C.dist(color, C.WHITE) < C.dist(color, C.black)) ? C.black : C.white;
+      doneButton.label.color = tcolor;
+      return o_cgf(color);
+    }
+    doneButton.shape.cgf = cgf; // invokes shape.paint(cgf) !!
+    return actionCont;
   }
 
   startGame() {

@@ -1,6 +1,7 @@
 import { Constructor, json } from "@thegraid/common-lib";
 import { KeyBinder, S, Undo, blinkAndThen, stime } from "@thegraid/easeljs-lib";
 import type { GameSetup } from "./game-setup";
+import { GameState } from "./game-state";
 import { Hex, Hex1, HexMap, IHex } from "./hex";
 import { Meeple } from "./meeple";
 import { Player } from "./player";
@@ -39,6 +40,10 @@ export class GamePlay0 {
   static gpid = 0
   readonly id = GamePlay0.gpid++
 
+  readonly gameState: GameState = (this instanceof GamePlay) ? new GameState(this as GamePlay) : undefined as any as GameState;
+  get gamePhase() { return this.gameState.state; }
+  isPhase(name: string) { return this.gamePhase === this.gameState.states[name]; }
+  phaseDone(...args: any[]) { this.gameState.done(...args); }
   recycleHex: Hex1;
   ll(n: number) { return TP.log > n }
 

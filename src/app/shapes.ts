@@ -256,8 +256,8 @@ export class UtilButton extends Container implements Paintable {
   shape: PaintableShape;
   label: CenterText;
   get label_text() { return this.label.text; }
-  set label_text(t: string) {
-    this.label.text = t;
+  set label_text(t: string | undefined) {
+    this.label.text = t as string;
     this.paint(undefined, true);
   }
 
