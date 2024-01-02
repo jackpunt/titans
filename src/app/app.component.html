@@ -1,20 +1,31 @@
 
 <div class="content" role="main">
   <stage-comp [width]=1760 [height]=978> TableComponent here</stage-comp>
-  <div  style="position: absolute; top: 10px; left: 15px; z-index: 9999">
-    <a href="https://docs.google.com/document/d/1qkTX3KQAgE9lSL9dvZEAgiO7CAfmuvQDSesZIN9-JDo/view#" target="_blank" rel="noopener">{{ title }}</a>
+  <div  style="position: absolute; top: 5px; left: 50px; z-index: 9999">
+    <a href="https://github.com/jackpunt/titans/blob/main/README.md" target="_blank" rel="noopener">{{ linkName }}</a>
     <br/>
     <span>{{ timestamp }}</span>
     <br/>
-    <div class="f4">Game: <span id="group_name">----</span></div>
-    <br/>
     <button type="submit" id="fsOpenFileButton" onclick="showOpenFilePicker()">OpenFile</button>
+    <br/>
+    <br/>
+    <span>
+    <button type="submit" id="fsReadFileButton" onclick="showOpenFilePicker()">ReadFile</button>
+    &nbsp;
+    <input type="text" id="readFileName" name="filename" title="log_date_time@turn" size="28" />
+    </span>
+    <br/>
+    <span>
+    <button type="submit" id="parseStateButton" onclick="parseState()">SetState</button>
+    &nbsp;
+    <input type="text" id="parseStateText" name="parseState" title="paste {ngods: , turn: , ...}" size="28" />
+    </span>
     <br/>
     <!-- P&P templte: single-sided = 2550 x 3300 [landscape, 7x5 EWtopo] or double-sided = 5100 x 3300 [portrait] -->
     <!-- 1 inch circle Premium Label Supply: [height]=3290 [width]=2530 -->
-    <a id="makePage"><button type="button">MakePage</button></a>
-    <br/>
     <a id="viewPage"><button type="button">ViewPage</button></a>
+    <br/>
+    <div class="f4">Game: <span id="group_name">----</span></div>
     <br/>
     <a id="download" download="image.png"><button type="button">Download</button></a>
   </div>

@@ -8,6 +8,7 @@ import { KeyBinder } from '@thegraid/easeljs-lib';
 })
 export class AppComponent {
   title = 'titans';
+  linkName = `Titans - User Guide`;
   timestamp = `${new Date().toLocaleTimeString('en-US')}`;
 
   constructor(private keyBinder: KeyBinder) { }

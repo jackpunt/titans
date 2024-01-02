@@ -10,7 +10,7 @@ import { MapTile, Tile, } from "./tile";
 
 export class Player {
   static allPlayers: Player[] = [];
-  static colorScheme = ['Red', 'Blue'];
+  static colorScheme = ['Red', 'Blue', 'darkgreen', 'Violet', 'gold', 'purple'];
 
   readonly Aname: string;
   constructor(

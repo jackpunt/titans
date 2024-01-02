@@ -17,17 +17,18 @@ export function buildURL(scheme = 'wss', host = TP.ghost, domain = TP.gdomain, p
 }
 export class TP {
   static colorScheme = playerColorRecordF(n => n);
-  static useEwTopo = false;
+  static useEwTopo = true;  // spiral districts require useEwTopo === true
   static cacheTiles = 2;
   static snapToPixel = true;
   static textLogLines = 13;
   static log = 0; // log level; see also: GamePlay.ll(n)
 
   static numPlayers = 2;
+  static maxPlayers = 6;
   static mapRows:number = 7;   /// standard: 6
   static mapCols:number = 12;  /// standard: 15
-  static nHexes = TP.mapRows;
-  static mHexes = TP.mapCols;
+  static nHexes = 6;
+  static mHexes = 1;
 
   static playerRGBcolors: string[] = []; // filled by Player.initialize()
   static autoEvent: number | true = 2000;
@@ -54,4 +55,8 @@ export class TP {
   static hexRad = 60;
   static meepleRad = 45;
   static meepleY0 = 15;
+
+  // for AI control:
+  static maxPlys = 3;
+  static maxBreadth = 3;
 }

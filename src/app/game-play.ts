@@ -1,15 +1,15 @@
 import { Constructor, json } from "@thegraid/common-lib";
 import { KeyBinder, S, Undo, blinkAndThen, stime } from "@thegraid/easeljs-lib";
-import type { GameSetup } from "./game-setup";
+import type { GameSetup, Scenario } from "./game-setup";
 import { GameState } from "./game-state";
-import { Hex, Hex1, HexMap, IHex } from "./hex";
+import { Hex, Hex1, Hex2, HexConstructor, HexMap, IHex } from "./hex";
 import { Meeple } from "./meeple";
 import { Player } from "./player";
 import { Table } from "./table";
 import { PlayerColor, TP } from "./table-params";
 import { Tile } from "./tile";
 import { Planner } from "./plan-proxy";
-//import { NC } from "./choosers";
+import { SetupElt } from "./scenario-parser";
 
 export type NamedObject = { name?: string, Aname?: string };
 
@@ -52,7 +52,7 @@ export class GamePlay0 {
   get allPlayers() { return Player.allPlayers; }
   get allTiles() { return Tile.allTiles; }
 
-  readonly hexMap = new HexMap<Hex>(); // create base map; no districts until Table.layoutTable!
+  readonly hexMap = new HexMap<Hex>(TP.hexRad, true, Hex2 as Constructor<Hex>); // create base map; no districts until Table.layoutTable!
   readonly history: Move[] = []          // sequence of Move that bring board to its state
   readonly redoMoves: { hex: Hex | IHex }[] = []
 
@@ -68,12 +68,6 @@ export class GamePlay0 {
   constructor(public gameSetup: GameSetup) {
     this.hexMap.Aname = `mainMap`;
     //this.hexMap.makeAllDistricts(); // For 'headless'; re-created by Table, after addToMapCont()
-
-    // Create and Inject all the Players:
-    this.allPlayers.length = 0;
-    const gamePlay = (this instanceof GamePlay) ? this as GamePlay : undefined;
-    this.curPlayerNdx = 0;
-    this.curPlayer = this.allPlayers[this.curPlayerNdx];
   }
 
   turnNumber: number = 0    // = history.lenth + 1 [by this.setNextPlayer]
@@ -228,10 +222,9 @@ export class GamePlay0 {
 export class GamePlay extends GamePlay0 {
   readonly table: Table   // access to GUI (drag/drop) methods.
   /** GamePlay is the GUI-augmented extension of GamePlay0; uses Table */
-  constructor(table: Table, gameSetup: GameSetup) {
+  constructor(scenario: Scenario, table: Table, gameSetup: GameSetup) {
     super(gameSetup);            // hexMap, history, gStats...
     Tile.gamePlay = this; // table
-    // Players have: civics & meeples & TownSpec
     this.table = table;
     if (this.table.stage.canvas) this.bindKeys();
   }
@@ -284,13 +277,9 @@ export class GamePlay extends GamePlay0 {
     KeyBinder.keyBinder.setKey('C-p', { thisArg: this, func: this.pickState, argVal: false }) // can't use Meta-P
     KeyBinder.keyBinder.setKey('k', () => this.logWriter.showBacklog());
     KeyBinder.keyBinder.setKey('D', () => this.fixit())
-    let cardSelectorsUp = false;
-    KeyBinder.keyBinder.setKey('C', () => {
-      const vis = (cardSelectorsUp = !cardSelectorsUp);
-      this.table.allPlayerPanels.forEach(panel => panel.showCardSelector(vis));
-    });
+
     KeyBinder.keyBinder.setKey('C-s', () => {  // C-s START
-      blinkAndThen(this.hexMap.mapCont.markCont, () => this.gameSetup.restart());
+      blinkAndThen(this.hexMap.mapCont.markCont, () => this.gameSetup.restart({}));
     });
 
     // diagnostics:
@@ -329,7 +318,7 @@ export class GamePlay extends GamePlay0 {
   //   this.gameSetup.restart(state);
   // }
 
-  backStates: Array<{ turn?: number }> = [];
+  backStates: Array<SetupElt> = [];
   /** setNextPlayer->startTurn (or Key['p']) */
   saveState() {
     if (this.nstate !== 0) {

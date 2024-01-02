@@ -55,12 +55,12 @@ export class StageComponent implements OnInit {
     TP.ghost = urlParams.get('host') || TP.ghost
     TP.gport = Number.parseInt(urlParams.get('port') || TP.gport.toString(10), 10)
     TP.networkUrl = buildURL(undefined);
-    // const {n, gods, scene, file} = this.qParams;
-    // this.titleService.setTitle(`Ankh ${scene?` scene=${scene}`:''}${n?` n=${n}`:''}${gods?` gods=${gods}`:''}${file?`file=${file}`:''}`)
-    // ;(document.getElementById('readFileName') as HTMLInputElement).value = file ?? 'scene@0';
+    const {n, file} = this.qParams;
+    this.titleService.setTitle(`Titans ${n?` n=${n}`:''}${file?`file=${file}`:''}`);
+    ;(document.getElementById('readFileName') as HTMLInputElement).value = file ?? 'setup@0';
     const gs = new GameSetup(this.mapCanvasId, this.qParams);    // load images; new GamePlay(qParams);
-    if (href.endsWith("startup") || true) {
-      gs.startup(true, undefined);
+    if (href.endsWith("startup") || false) {
+      gs.startup(this.qParams);
     }
   }
   // see: stream-writer.setButton

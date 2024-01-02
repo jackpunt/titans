@@ -56,7 +56,7 @@ export class Hex {
   }
   /** (x,y): center of hex; (width,height) of hex; scaled by radius if supplied
    * @param radius [1] radius used in drawPolyStar(radius,,, H.dirRot[tiltDir])
-   * @param ewTopo [true] suitable for ewTopo (long axis of hex is N/S)
+   * @param ewTopo [TP.useEwTopo] true -> suitable for ewTopo (long axis of hex is N/S)
    * @param row [this.row]
    * @param col [this.col]
    * @returns \{ x, y, w, h, dxdc, dydr } of cell at [row, col]
@@ -473,10 +473,12 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
     let cc = Math.floor(((this.minCol ?? 0) + (this.maxCol ?? 0)) / 2);
     return this[cr][cc]; // as Hex2; as T;
   }
+  // when called, maxRow, etc are defined...
+  get nRowCol() { return [(this.maxRow ?? 0) - (this.minRow ?? 0), (this.maxCol ?? 0) - (this.minCol ?? 0)] }
   getCornerHex(dn: HexDir) {
     return this.centerHex.lastHex(dn)
   }
-  rcLinear(row: number, col: number): number { return col + row * (1 + (this.maxCol || 0) - (this.minCol||0)) }
+  rcLinear(row: number, col: number): number { return col + row * (1 + (this.maxCol ?? 0) - (this.minCol ?? 0)) }
 
   readonly metaMap = Array<Array<T>>()           // hex0 (center Hex) of each MetaHex, has metaLinks to others.
 
@@ -589,16 +591,17 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   }
 
   /** neighborhood topology, E-W & N-S orientation; even(n0) & odd(n1) rows: */
-  topo: (rc: RC) => (TopoEW | TopoNS) = H.ewTopo;
+  topo: (rc: RC) => (TopoEW | TopoNS) = TP.useEwTopo ? H.ewTopo : H.nsTopo;
 
   /** see also: Hex.linkDirs */
   get linkDirs(): HexDir[] {
     return TP.useEwTopo ? H.ewDirs : H.nsDirs;
   }
 
-  nextRowCol(hex: RC, dir: HexDir, nt: Topo = this.topo(hex)): RC {
-    const { dr, dc } = (nt as TopoNS)[dir as NsDir]; // OR (nt as TopoEW[dir as EwDir]) OR simply: nt[dir]
-    let row = hex.row + dr, col = hex.col + dc;
+  nextRowCol(rc: RC, dir: HexDir, nt: Topo = this.topo(rc)): RC {
+    const ntdir = (nt as TopoNS)[dir as NsDir];
+    const { dr, dc } = ntdir; // OR (nt as TopoEW[dir as EwDir]) OR simply: nt[dir]
+    let row = rc.row + dr, col = rc.col + dc;
     return { row, col }
   }
 
@@ -645,13 +648,15 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
     return hexAry;
   }
   centerOnContainer() {
-    let mapCont = this.mapCont
+    let mapCont = this.mapCont;
     let hexRect = mapCont.hexCont.getBounds(); // based on aggregate of Hex2.cont.cache(bounds);
-    let x0 = hexRect.x + hexRect.width/2, y0 = hexRect.y + hexRect.height/2;
+    const { x, y, width, height } = hexRect;
+    let x0 = x + width / 2, y0 = y + height / 2;
     MapCont.cNames.forEach(cname => {
-      mapCont[cname].x = -x0
-      mapCont[cname].y = -y0
+      const cont = mapCont[cname];
+      cont.x = -x0; cont.y = -y0
     })
+    // mapCont.x = x0; mapCont.y = y0;
   }
 
   pickColor(hexAry: Hex2[]): string {

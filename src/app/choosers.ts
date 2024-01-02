@@ -8,7 +8,7 @@ export class NC extends DropdownChoice {
     let pidStyle = { arrowColor: 'transparent', textAlign: 'right' }
     return DropdownButton.mergeStyle(pidStyle, baseStyle)
   }
-  constructor(items: DropdownItem[], item_w: number, item_h: number, defStyle?: DropdownStyle) {
+  constructor(items: DropdownItem[], item_w: number, item_h: number, defStyle: DropdownStyle = {}) {
     super(items, item_w, item_h, NC.style(defStyle))
   }
   /** never expand */
@@ -24,7 +24,7 @@ export class NC extends DropdownChoice {
 /** Chooser with an EditBox */
 export class EBC extends Chooser {
   editBox: EditBox;
-  constructor(items: ChoiceItem[], item_w: number, item_h: number, style?: ChoiceStyle & TextStyle) {
+  constructor(items: ChoiceItem[], item_w: number, item_h: number, style: ChoiceStyle & TextStyle = {}) {
     super(items, item_w, item_h, style)
     style && (style.bgColor = style.fillColor)
     style && (style.textColor = C.BLACK)

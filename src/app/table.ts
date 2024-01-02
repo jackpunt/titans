@@ -10,6 +10,7 @@ import { CircleShape, HexShape, PaintableShape, RectShape, UtilButton } from "./
 import { PlayerColor, playerColor0, playerColor1, TP } from "./table-params";
 import { Tile } from "./tile";
 import { TileSource } from "./tile-source";
+import { Scenario } from "./game-setup";
 //import { TablePlanner } from "./planner";
 
 function firstChar(s: string, uc = true) { return uc ? s.substring(0, 1).toUpperCase() : s.substring(0, 1) };
@@ -217,6 +218,7 @@ export class Table extends EventDispatcher  {
     Tile.allTiles.forEach(tile => tile.textVis(vis));
     this.hexMap.forEachHex<Hex2>(hex => hex.showText(vis))
     this.hexMap.update()               // after toggleText & updateCache()
+    return undefined;
   }
 
   aiControl(color = TP.bgColor, dx = 100, rad = 16) {
@@ -269,35 +271,52 @@ export class Table extends EventDispatcher  {
     return hex;
   }
 
-  layoutTable(gamePlay: GamePlay) {
-    this.gamePlay = gamePlay;
-    const hexMap = this.hexMap = gamePlay.hexMap as any as HexMap<Hex2>; //  as AnkhMap<AnkhHex>
-    hexMap.addToMapCont();                   // addToMapCont; make AnkhHex
-    hexMap.makeAllDistricts();               //
+  /**
+   *
+   * @param x0 frame left (* colw); relative to scaleCont
+   * @param y0 frame top (* rowh); relative to scaleCont
+   * @param w0 pad width (* colw);
+   * @param h0 pad height (* rowh)
+   * @param dh
+   * @returns
+   */
+  bgXYWH(x0 = 0, y0 = 0, w0 = 14, h0 = .5, dw = 0, dh = 1.5) {
+    const hexMap = this.hexMap;
     // hexCont is offset to be centered on mapCont (center of hexCont is at mapCont[0,0])
     // mapCont is offset [0,0] to scaleCont
     const mapCont = hexMap.mapCont, hexCont = mapCont.hexCont; // local reference
     this.scaleCont.addChild(mapCont);
 
     // background sized for hexMap:
-    const { width: rw, height: rh } = hexCont.getBounds();
+    const { x: hx, y: hy, width: rw, height: rh } = hexCont.getBounds();
     const { x, y, w, h, dxdc: colw, dydr: rowh } = hexMap.xywh;
-    const bgr: XYWH = { x: -2 * colw, y: 0, w: rw + 14 * colw, h: rh + .5 * rowh }
+    const [nrow, ncol] = hexMap.nRowCol;
+    const xywh: XYWH = { x: x0 * colw, y: y0 * rowh, w: rw + w0 * colw, h: rh + h0 * rowh }
     // align center of mapCont(0,0) == hexMap(center) with center of background
-    mapCont.x = bgr.x + (bgr.w) / 2;
-    mapCont.y = bgr.y + (bgr.h) / 2;
-    bgr.h += 1.5 * rowh;
+    mapCont.x = xywh.x + (xywh.w) / 2;
+    mapCont.y = xywh.y + (xywh.h) / 2;
+    xywh.w += dw * colw;
+    xywh.h += dh * rowh;
+    return xywh;
+  }
 
-    this.bgRect = this.setBackground(this.scaleCont, bgr); // bounded by bgr
-    const p00 = this.scaleCont.localToLocal(bgr.x, bgr.y, hexCont);
-    const pbr = this.scaleCont.localToLocal(bgr.w, bgr.h, hexCont);
-    hexCont.cache(p00.x, p00.y, pbr.x - p00.x, pbr.y - p00.y); // cache hexCont (bounded by bgr)
+  layoutTable(gamePlay: GamePlay) {
+    this.gamePlay = gamePlay;
+    const hexMap = this.hexMap = gamePlay.hexMap as any as HexMap<Hex2>; //  as AnkhMap<AnkhHex>
+    hexMap.addToMapCont();                   // addToMapCont; make AnkhHex
+    hexMap.makeAllDistricts();               //
+
+    const xywh = this.bgXYWH(-1, .5, 10, 1, 0, 0);
+    const hexCont = this.hexMap.mapCont.hexCont, hexp = this.scaleCont;
+    this.bgRect = this.setBackground(this.scaleCont, xywh); // bounded by xywh
+    const { x, y, width, height } = hexCont.getBounds();
+    hexCont.cache(x, y, width, height); // cache hexCont (bounded by bgr)
 
     this.layoutTable2(); // supply args (mapCont?) if necessary; make overlays, score panel, extra tracks (auction...)
     this.makePerPlayer();
 
     this.gamePlay.recycleHex = this.makeRecycleHex();
-    this.setupUndoButtons(55, 60, 45, bgr) // & enableHexInspector()
+    this.setupUndoButtons(55, 60, 45, xywh) // & enableHexInspector()
 
     const initialVis = false;
     this.stage.on('drawend', () => setTimeout(() => this.toggleText(initialVis), 10), this, true );
@@ -328,18 +347,27 @@ export class Table extends EventDispatcher  {
   layoutTable2() {
 
   }
+  get panelHeight() { return (2 * TP.nHexes - 1) / 3 - .2; }
+  // col==0 is on left edge of hexMap; The *center* hex is col == (nHexes-1)
+  panelLoc(pIndex: number, np = Math.min(Player.allPlayers.length, 6), r0 = TP.nHexes, dr = this.panelHeight + .2) {
+    const nh1 = TP.nHexes - 1, coff = TP.nHexes + 2;
+    const c0 = nh1 - coff, c1 = nh1 + coff;
+    const locs = [
+      [r0 - dr, c0, -1], [r0, c0, -1], [r0 + dr, c0, -1],
+      [r0 - dr, c1, +1], [r0, c1, +1], [r0 + dr, c1, +1]];
+    const seq = [[], [0], [0, 3], [0, 3, 1], [0, 3, 4, 1], [0, 3, 4, 2, 1], [0, 3, 4, 5, 2, 1]];
+    const seqn = seq[np], ndx = seqn[Math.min(pIndex, np - 1)];
+    return locs[ndx];
+  }
 
   readonly allPlayerPanels: PlayerPanel[] = [];
   /** make player panels, placed at locations... */
-  makePerPlayer(c0 = -7.4, c1 = TP.nHexes + .9, r0 = -.3, dr = 3.4) {
-    const panelLocs = [[r0, c0], [r0 + dr, c0], [r0 + 2 * dr, c0], [r0, c1], [r0 + dr, c1]];
-    const seq = [[], [0], [0, 3], [0, 3, 1], [0, 3, 4, 1], [0, 3, 4, 2, 1]];
-    const np = Player.allPlayers.length, seqn = seq[np];
+  makePerPlayer() {
     this.allPlayerPanels.length = 0; // TODO: maybe deconstruct
+    const high = this.panelHeight, wide = 5;
     Player.allPlayers.forEach((player, pIndex) => {
-      const ndx = seqn[pIndex];
-      const [row, col] = panelLocs[ndx];
-      this.allPlayerPanels[pIndex] = player.panel = new PlayerPanel(this, player, row, col, ndx < 3 ? -1 : 1);
+      const [row, col, dir] = this.panelLoc(pIndex);
+      this.allPlayerPanels[pIndex] = player.panel = new PlayerPanel(this, player, high, wide, row-high/2, col-wide/2, dir);
       player.makePlayerBits();
     });
   }
@@ -433,7 +461,9 @@ export class Table extends EventDispatcher  {
     return actionCont;
   }
 
-  startGame() {
+  setPlayerScore(plyr: Player, score: number, rank?: number) {
+  }
+  startGame(gameState: Scenario) {
     // All Tiles (& Meeple) are Dragable:
     Tile.allTiles.forEach(tile => {
       this.makeDragable(tile);
