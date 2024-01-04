@@ -1,16 +1,16 @@
 import { AT, C, CenterText, Constructor, Dragger, DragInfo, F, KeyBinder, S, ScaleableContainer, stime, XY } from "@thegraid/easeljs-lib";
 import { Container, DisplayObject, EventDispatcher, Graphics, MouseEvent, Shape, Stage, Text } from "@thegraid/easeljs-module";
-import { NamedObject, type GamePlay } from "./game-play";
+import { NamedContainer, NamedObject, type GamePlay } from "./game-play";
+import { Scenario } from "./game-setup";
 import type { GameState } from "./game-state";
 import { Hex, Hex2, HexMap, IHex } from "./hex";
-import { H, XYWH } from "./hex-intfs";
+import { XYWH } from "./hex-intfs";
 import { Player } from "./player";
 import { PlayerPanel } from "./player-panel";
-import { CircleShape, HexShape, PaintableShape, RectShape, UtilButton } from "./shapes";
+import { CircleShape, HexShape, RectShape, UtilButton } from "./shapes";
 import { PlayerColor, playerColor0, playerColor1, TP } from "./table-params";
 import { Tile } from "./tile";
 import { TileSource } from "./tile-source";
-import { Scenario } from "./game-setup";
 //import { TablePlanner } from "./planner";
 
 function firstChar(s: string, uc = true) { return uc ? s.substring(0, 1).toUpperCase() : s.substring(0, 1) };
@@ -46,9 +46,9 @@ export interface DragContext {
   phase?: string;       // keysof GameState.states
 }
 
-class TextLog extends Container {
-  constructor(public Aname: string, nlines = 6, public size: number = 30, public lead = 3) {
-    super()
+class TextLog extends NamedContainer {
+  constructor(Aname: string, nlines = 6, public size: number = 30, public lead = 3) {
+    super(Aname);
     this.lines = new Array<Text>(nlines);
     for (let ndx = 0; ndx < nlines; ndx++) this.lines[ndx] = this.newText(`//0:`)
     this.addChild(...this.lines);
@@ -112,7 +112,7 @@ export class Table extends EventDispatcher  {
   bgRect: Shape
   hexMap: HexMap<Hex2>; // from gamePlay.hexMap
 
-  undoCont: Container = new Container();
+  undoCont: Container = new NamedContainer('undoCont');
   undoShape: Shape = new Shape();
   skipShape: Shape = new Shape();
   redoShape: Shape = new Shape();
@@ -133,9 +133,10 @@ export class Table extends EventDispatcher  {
     this.scaleCont = this.makeScaleCont(!!this.stage.canvas) // scaleCont & background
     this.scaleCont.addChild(this.overlayCont); // will add again at top/end of the list.
   }
-  bagLog = new TextLog('bagLog', 1);    // show 1 line of bag contents
-  turnLog = new TextLog('turnLog', 2);  // shows the last 2 start of turn lines
-  textLog = new TextLog('textLog', TP.textLogLines); // show other interesting log strings.
+  /** shows the last 2 start of turn lines */
+  turnLog = new TextLog('turnLog', 2);
+  /** show [13] other interesting log strings */
+  textLog = new TextLog('textLog', TP.textLogLines);
 
   logTurn(line: string) {
     this.turnLog.log(line, 'table.logTurn'); // in top two lines
@@ -148,9 +149,8 @@ export class Table extends EventDispatcher  {
     // this.gamePlay.logWriter.writeLine(`"${line}",`);
   }
 
-  setupUndoButtons(xOffs: number, bSize: number, skipRad: number, bgr: XYWH, row = 10, col = -9) {
-    const undoC = this.undoCont; undoC.name = "undo buttons"; // holds the undo buttons.
-    undoC.name = `undoCont`;
+  setupUndoButtons(xOffs: number, bSize: number, skipRad: number, bgr: XYWH, row = 8, col = -7) {
+    const undoC = this.undoCont; // holds the undo buttons.
     this.setToRowCol(undoC, row, col);
     const progressBg = new Shape(), bgw = 200, bgym = 140, y0 = 0; // bgym = 240
     const bgc = C.nameToRgbaString(TP.bgColor, .8);
@@ -320,16 +320,14 @@ export class Table extends EventDispatcher  {
     const initialVis = false;
     this.stage.on('drawend', () => setTimeout(() => this.toggleText(initialVis), 10), this, true );
     this.hexMap.update();
-    // position turnLog & turnText
+    // position turnLog & textLog
     {
-      const parent = this.scaleCont, colx = -15;
-      this.setToRowCol(this.bagLog, 4, colx);
+      const parent = this.scaleCont, colx = -12;
       this.setToRowCol(this.turnLog, 4, colx);
       this.setToRowCol(this.textLog, 4, colx);
-      this.bagLog.y -= this.turnLog.height(1);
-      this.textLog.y += this.turnLog.height(Player.allPlayers.length + 1);
+      this.textLog.y += this.turnLog.height(Player.allPlayers.length + 1); // allow room for 1 line per player
 
-      parent.addChild(this.bagLog, this.turnLog, this.textLog);
+      parent.addChild(this.turnLog, this.textLog);
       parent.stage.update()
     }
 

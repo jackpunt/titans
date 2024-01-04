@@ -1,5 +1,6 @@
 import { CenterText, S, stime } from "@thegraid/easeljs-lib";
 import { Container, Graphics, MouseEvent, Text } from "@thegraid/easeljs-module";
+import { NamedContainer } from "./game-play";
 import { Player } from "./player";
 import { RectShape, UtilButton } from "./shapes";
 import { Table } from "./table";
@@ -13,7 +14,7 @@ interface ConfirmCont extends Container {
   buttonCan: UtilButton;
 }
 
-export class PlayerPanel extends Container {
+export class PlayerPanel extends NamedContainer {
 
   outline: RectShape;
   get hexMap() { return this.table.gamePlay.hexMap }
@@ -37,8 +38,7 @@ export class PlayerPanel extends Container {
     col: number,
     public dir = -1
   ) {
-    super();
-    this.name = this.player.Aname;   // for debugger
+    super(player.Aname);              // for debugger
     table.hexMap.mapCont.resaCont.addChild(this);
     table.setToRowCol(this, row, col);
     this.setOutline();

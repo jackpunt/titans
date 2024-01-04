@@ -193,8 +193,8 @@ export class GameSetup {
     // this.makeParamGUI(table.scaleCont, -400, 250);
     const gpanel = (makeGUI: (cont: Container) => ParamGUI, name: string, cx: number, cy: number, scale = 1) => {
       const guiC = new NamedContainer(name, cx * scale, cy * scale);
-      // const map = table.hexMap.mapCont.parent;  scaleCont.addChildAt(guiC, map);
-      scaleCont.addChild(guiC);
+      // const map = table.hexMap.mapCont.parent;
+      scaleCont.addChildAt(guiC);
       guiC.scaleX = guiC.scaleY = scale;
       const gui = makeGUI.call(this, guiC);      // @[0, 0]
       guiC.x -= (gui.linew + d) * scale;
@@ -210,6 +210,8 @@ export class GameSetup {
     ymax += gui1.ymax + 20;
     const gui2 = gpanel(this.makeParamGUI2, 'AI_GUI', cx, cy + ymax, scale);
     ymax += gui2.ymax + 20;
+    scaleCont.addChild(gui2.parent, gui1.parent, gui3.parent); // lower y values ABOVE to dropdown is not obscured
+    // TODO: dropdown to use given 'top' container!
     gui1.stage.update();
   }
 
