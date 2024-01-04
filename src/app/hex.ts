@@ -78,6 +78,7 @@ export class Hex {
       return { x, y, w, h, dxdc, dydr }
     }
   }
+  get xywh0() { return this.xywh(); } // so can see xywh from debugger
 
   readonly Aname: string
   /** reduce to serializable IHex (removes map, inf, links, etc) */
@@ -462,7 +463,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
 
   readonly radius = TP.hexRad
   /** return this.centerHex.xywh() for this.topo */
-  get xywh() { return this.centerHex.xywh(undefined, TP.useEwTopo); }
+  get xywh() { return this.centerHex.xywh(); }
 
   private minCol?: number = undefined               // Array.forEach does not look at negative indices!
   private maxCol?: number = undefined               // used by rcLinear
@@ -636,12 +637,21 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
     if (hexc instanceof HexCont) return hexc.hex2 as any as T;
     return undefined;
   }
+
+  // not sure if these will be useful:
+  private _nh: number;
+  private _mh: number;
+  get nh() { return this._nh }
+  get mh() { return this._mh }
+
   /**
    *
    * @param nh number of hexes on on edge of metaHex
    * @param mh order of metaHexes (greater than 0);
    */
   makeAllDistricts(nh = TP.nHexes, mh = TP.mHexes) {
+    this._nh = nh;
+    this._mh = mh;
     const hexAry = this.makeDistrict(nh, 0, mh, 0);    // nh hexes on outer ring; single meta-hex
     this.mapCont.hexCont && this.centerOnContainer();
     this.hexAry = hexAry;
@@ -673,6 +683,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
   /**
    * rings of Hex with EwTopo; HexShape(tilt = 'NE')
    * @param nh order of inner-hex: number hexes on side of meta-hex
+   * @param district identifying number of this district
    * @param mr make new district on meta-row
    * @param mc make new district on meta-col
    */
@@ -702,7 +713,7 @@ export class HexMap<T extends Hex> extends Array<Array<T>> implements HexM<T> {
     //console.groupCollapsed(`makelDistrict [mr: ${mr}, mc: ${mc}] hex0= ${hex.Aname}:${district}-${dcolor}`)
     //console.log(`.makeDistrict: [mr: ${mr}, mc: ${mc}] hex0= ${hex.Aname}`, hex)
     const dirs = this.linkDirs;     // HexDirs of the extant Topo.
-    const startDir = dirs.includes('W') ? 'W' : 'WN'; // 'W' or 'NW'
+    const startDir = dirs.includes('W') ? 'W' : 'WN'; // 'W' or 'WN'
     for (let ring = 1; ring < nh; ring++) {
       rc = this.nextRowCol(rc, startDir); // step West to start a ring
       // place 'ring' hexes along each axis-line:

@@ -1,5 +1,4 @@
 import { AT, S, stime } from "@thegraid/common-lib";
-import { EzPromise } from "@thegraid/ezpromise";
 import {} from "wicg-file-system-access"
 
 export interface ILogWriter {
@@ -14,7 +13,16 @@ class FileBase {
   /** stime ident string in 'red' */
   ident(id: string, color: AT.AnsiKey = 'red') { return AT.ansiText([color], `.${id}:`) }
 
-  /** multi-purpose picker button: (callback arg-type changes) */
+  /** multi-purpose picker button: (callback arg-type changes)
+   *
+   * @param method 'showOpenFilePicker' | 'showSaveFilePicker' | 'showDirectoryPicker'
+   * @param options from "wicg-file-system-access":
+   * - OpenFilePickerOptions { multiple?: boolean }
+   * - SaveFilePickerOptions { suggestedName?: string }
+   * - DirectoryPickerOptions {}
+   * @param cb returns the fileHandle/fileHandleAry
+   * @param inText set innerText of button ['OpenFile', 'SaveFile', 'Directory'] based on method
+   */
   setButton(method: 'showOpenFilePicker' | 'showSaveFilePicker' | 'showDirectoryPicker',
     options: (OpenFilePickerOptions | SaveFilePickerOptions | DirectoryPickerOptions),
     cb: (fileHandleAry: any) => void, inText = method.substring(4, method.length - 6))
@@ -174,25 +182,24 @@ export class LogReader extends FileBase  {
    * - multiple?: false;
    */
   setButtonToReadFile() {
-    let options: OpenFilePickerOptions = {}
-    let fileReadPromise = new EzPromise<File>()
-    this.setButton('showOpenFilePicker', options, ([fileHandle]) => {
+    return new Promise<File>((fulfill => {
+      this.setButton('showOpenFilePicker', {}, ([fileHandle]) => {
         this.fileHandle = fileHandle as FileSystemFileHandle;
-        fileReadPromise.fulfill(this.fileHandle.getFile());
+        fulfill(this.fileHandle.getFile());
       }, 'LoadFile');
-    return fileReadPromise
+    }))
   }
 
   // async readPickedFile(fileReadPromise: File | Promise<File> = this.pickFileToRead()) {
   //   return this.readFile(await fileReadPromise)
   // }
   async readFile(file: File) {
-    let fileP = new EzPromise<string>()
-    let fileReader = new FileReader()
-    fileReader.onload = () => {
-      fileP.fulfill(fileReader.result as string)
-    }
-    fileReader.readAsText(file) // , encoding=utf-8 => void!
-    return fileP
+    return new Promise<string>((fulfill) => {
+      let fileReader = new FileReader()
+      fileReader.onload = () => {
+        fulfill(fileReader.result as string)
+      }
+      fileReader.readAsText(file) // , encoding=utf-8 => void!
+    })
   }
 }

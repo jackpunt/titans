@@ -1,17 +1,26 @@
 import { Constructor, json } from "@thegraid/common-lib";
 import { KeyBinder, S, Undo, blinkAndThen, stime } from "@thegraid/easeljs-lib";
+import { Container } from "@thegraid/easeljs-module";
 import type { GameSetup, Scenario } from "./game-setup";
 import { GameState } from "./game-state";
-import { Hex, Hex1, Hex2, HexConstructor, HexMap, IHex } from "./hex";
+import { Hex, Hex1, Hex2, HexMap, IHex } from "./hex";
 import { Meeple } from "./meeple";
+import { Planner } from "./plan-proxy";
 import { Player } from "./player";
+import { SetupElt } from "./scenario-parser";
 import { Table } from "./table";
 import { PlayerColor, TP } from "./table-params";
 import { Tile } from "./tile";
-import { Planner } from "./plan-proxy";
-import { SetupElt } from "./scenario-parser";
 
 export type NamedObject = { name?: string, Aname?: string };
+export class NamedContainer extends Container implements NamedObject {
+  Aname: string;
+  constructor(name: string, cx = 0, cy = 0) {
+    super();
+    this.Aname = this.name = name;
+    this.x = cx; this.y = cy;
+  }
+}
 
 class HexEvent {}
 class Move{
@@ -87,38 +96,6 @@ export class GamePlay0 {
   logText(line: string, from = '') {
     if (this instanceof GamePlay) this.table.logText(line, from);
   }
-
-  // permute(stack: any[]) {
-  //   for (let i = 0, len = stack.length; i < len; i++) {
-  //     let ndx: number = Math.floor(Math.random() * (len - i)) + i
-  //     let tmp = stack[i];
-  //     stack[i] = stack[ndx]
-  //     stack[ndx] = tmp;
-  //   }
-  //   return stack;
-  // }
-
-  // eventInProcess: EzPromise<void>;
-  // async awaitEvent(init: () => void) {
-  //   this.eventInProcess = new EzPromise<void>();
-  //   init(); // tile0.moveTo(eventHex);
-  //   return this.eventInProcess;
-  // }
-  // /** when Player click's 'Done' ? */
-  // finishEvent() {
-  //   this.eventInProcess.fulfill();
-  // }
-
-  // async processEventTile(tile0: Tile) {
-  //   // manually D&D event (to Player.Policies or RecycleHex)
-  //   // EventTile.dropFunc will: gamePlay.finishEvent();
-  //   await this.awaitEvent(() => {
-  //     // tile0.setPlayerAndPaint(this.curPlayer);
-  //     // tile0.moveTo(this.eventHex);
-  //     this.hexMap.update();
-  //   });
-  // }
-
 
   /**
    * When player has completed Actions and Event, do next player.

@@ -1,17 +1,17 @@
 import { Params } from "@angular/router";
-import { removeEltFromArray, selectN, uniq } from "@thegraid/common-lib";
-import { blinkAndThen, C, ChoiceItem, CycleChoice, DropdownChoice, DropdownItem, DropdownStyle, makeStage, ParamGUI, ParamItem, stime } from "@thegraid/easeljs-lib";
+import { C, DropdownChoice, DropdownItem, DropdownStyle, ParamGUI, ParamItem, blinkAndThen, makeStage, stime } from "@thegraid/easeljs-lib";
 import { Container, Stage } from "@thegraid/easeljs-module";
-import { EBC, PidChoice } from "./choosers";
 import { parse as JSON5_parse } from 'json5';
-import { GamePlay } from "./game-play";
+import { EBC, PidChoice } from "./choosers";
+import { GamePlay, NamedContainer } from "./game-play";
 import { Meeple } from "./meeple";
 import { Player } from "./player";
+import { ScenarioParser, SetupElt } from "./scenario-parser";
+import { RectShape } from "./shapes";
 import { LogReader, LogWriter } from "./stream-writer";
 import { Table } from "./table";
 import { TP } from "./table-params";
 import { Tile } from "./tile";
-import { ScenarioParser, SetupElt } from "./scenario-parser";
 
 /** show " R" for " N" */
 stime.anno = (obj: string | { constructor: { name: string; }, stage?: Stage, table?: Table }) => {
@@ -44,7 +44,7 @@ export class GameSetup {
    * ngAfterViewInit --> start here!
    * @param canvasId supply undefined for 'headless' Stage
    */
-  constructor(canvasId: string, public qParams: Params) {
+  constructor(canvasId: string, public qParams: Params = []) {
     stime.fmt = "MM-DD kk:mm:ss.SSSL"
     this.stage = makeStage(canvasId, false);
     this.stage.snapToPixel = TP.snapToPixel;
@@ -82,8 +82,10 @@ export class GameSetup {
     return logWriter;
   }
 
+  restartable = false;
   /** C-s ==> kill game, start a new one, possibly with new dbp */
   restart(stateInfo: any) {
+    if (!this.restartable) return;
     let netState = this.netState
     // this.gamePlay.closeNetwork('restart')
     // this.gamePlay.logWriter?.closeFile()
@@ -104,7 +106,11 @@ export class GameSetup {
 
   /** override: invoked by restart(); with stateInfo JSON5_parse(stateText) */
   resetState(stateInfo: any) {
-
+    const { mh, nh, hexRad } = stateInfo as { mh?: number, nh: number, hexRad: number }; // for example
+    TP.mHexes = mh ?? TP.mHexes;
+    TP.nHexes = nh ?? TP.nHexes;
+    TP.hexRad = hexRad ?? TP.hexRad;
+    this.startup();
   }
 
   /** read & parse State from text element */
@@ -148,7 +154,7 @@ export class GameSetup {
    * Make new Table/layout & gamePlay/hexMap & Players.
    * @param qParams from URL
    */
-  startup(qParams: Params = []) {
+  startup(qParams: Params = this.qParams) {
     this.nPlayers = Math.min(TP.maxPlayers, qParams?.['n'] ? Number.parseInt(qParams?.['n']) : 2);
     this.startScenario({turn: 0, Aname: 'defaultScenario'});
   }
@@ -175,13 +181,36 @@ export class GameSetup {
     this.gamePlay.logWriterLine0();
 
     gamePlay.forEachPlayer(p => p.newGame(gamePlay))        // make Planner *after* table & gamePlay are setup
-    // if (this.stage.canvas) {
-    //   console.groupCollapsed('initParamGUI')
-    //   // table.miniMap.mapCont.y = Math.max(gui.ymax, gui2.ymax) + gui.y + table.miniMap.wh.height / 2
-    //   console.groupEnd()
-    // }
+    this.restartable = false;
+    this.makeGUIs(table);
+    this.restartable = true;   // *after* makeLines has stablilized selectValue
     table.startGame(scenario); // parseScenario; allTiles.makeDragable(); setNextPlayer();
     return gamePlay
+  }
+
+  makeGUIs(table: Table) {
+    const scaleCont = table.scaleCont, scale = TP.hexRad / 60, cx = -200, cy = 250, d = 5;
+    // this.makeParamGUI(table.scaleCont, -400, 250);
+    const gpanel = (makeGUI: (cont: Container) => ParamGUI, name: string, cx: number, cy: number, scale = 1) => {
+      const guiC = new NamedContainer(name, cx * scale, cy * scale);
+      // const map = table.hexMap.mapCont.parent;  scaleCont.addChildAt(guiC, map);
+      scaleCont.addChild(guiC);
+      guiC.scaleX = guiC.scaleY = scale;
+      const gui = makeGUI.call(this, guiC);      // @[0, 0]
+      guiC.x -= (gui.linew + d) * scale;
+      const bgr = new RectShape({ x: -d, y: -d, w: gui.linew + 2 * d, h: gui.ymax + 2 * d }, 'rgb(200,200,200,.5)', '');
+      guiC.addChildAt(bgr, 0);
+      table.dragger.makeDragable(guiC);
+      return gui;
+    }
+    let ymax = 0;
+    const gui3 = gpanel(this.makeNetworkGUI, 'NetGUI', cx, cy + ymax, scale);
+    ymax += gui3.ymax + 20;
+    const gui1 = gpanel(this.makeParamGUI, 'ParamGUI', cx, cy + ymax, scale);
+    ymax += gui1.ymax + 20;
+    const gui2 = gpanel(this.makeParamGUI2, 'AI_GUI', cx, cy + ymax, scale);
+    ymax += gui2.ymax + 20;
+    gui1.stage.update();
   }
 
   scenarioParser: ScenarioParser;
@@ -198,23 +227,23 @@ export class GameSetup {
    * ParamGUI2  --> AI Player     [left of ParamGUI]
    * NetworkGUI --> network       [below ParamGUI2]
    */
-  makeParamGUI(table: Table, parent: Container, x: number, y: number) {
-    let restart = false
-    const gui = new ParamGUI(TP, { textAlign: 'right'})
+  makeParamGUI(parent: Container, x = 0, y = 0) {
+    const gui = new ParamGUI(TP, { textAlign: 'right'});
+    gui.makeParamSpec('hexRad', [30, 60, 90, 120], { fontColor: 'red'}); TP.hexRad;
+    gui.makeParamSpec('nHexes', [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], { fontColor: 'red' }); TP.nHexes;
+    gui.makeParamSpec('mHexes', [1, 2, 3], { fontColor: 'red' }); TP.mHexes;
+    gui.spec("hexRad").onChange = (item: ParamItem) => { this.restart({ hexRad: item.value }) }
+    gui.spec("nHexes").onChange = (item: ParamItem) => { this.restart({ nh: item.value }) }
+    gui.spec("mHexes").onChange = (item: ParamItem) => { this.restart({ mh: item.value }) }
 
     parent.addChild(gui)
     gui.x = x // (3*cw+1*ch+6*m) + max(line.width) - (max(choser.width) + 20)
     gui.y = y
-    gui.makeLines()
-    const gui2 = this.makeParamGUI2(parent, x - 320, y)
-    const gui3 = this.makeNetworkGUI(parent, x - 320, y + gui.ymax + 20 );
-    gui.parent.addChild(gui) // bring to top
-    gui.stage.update()
-    restart = true // *after* makeLines has stablilized selectValue
-    return [gui, gui2, gui3]
+    gui.makeLines();
+    return gui
   }
   /** configures the AI player */
-  makeParamGUI2(parent: Container, x: number, y: number) {
+  makeParamGUI2(parent: Container, x = 0, y = 0) {
     const gui = new ParamGUI(TP, { textAlign: 'center' })
     gui.makeParamSpec("log", [-1, 0, 1, 2], { style: { textAlign: 'right' } }); TP.log
     gui.makeParamSpec("maxPlys", [1, 2, 3, 4, 5, 6, 7, 8], { fontColor: "blue" }); TP.maxPlys
@@ -228,7 +257,7 @@ export class GameSetup {
   netColor: string = "rgba(160,160,160, .8)"
   netStyle: DropdownStyle = { textAlign: 'right' };
   /** controls multiplayer network participation */
-  makeNetworkGUI (parent: Container, x: number, y: number) {
+  makeNetworkGUI(parent: Container, x = 0, y = 0) {
     const gui = this.netGUI = new ParamGUI(TP, this.netStyle)
     gui.makeParamSpec("Network", [" ", "new", "join", "no", "ref", "cnx"], { fontColor: "red" })
     gui.makeParamSpec("PlayerId", ["     ", 0, 1, 2, 3, "ref"], { chooser: PidChoice, fontColor: "red" })
@@ -240,10 +269,10 @@ export class GameSetup {
         // this.gamePlay.closeNetwork()
         // this.gamePlay.network(item.value, gui, group)
       }
-      // if (item.value == "no") this.gamePlay.closeNetwork()     // provoked by ckey
+      // if (item.value === "no") this.gamePlay.closeNetwork()     // provoked by ckey
     }
     (this.stage.canvas as HTMLCanvasElement)?.parentElement?.addEventListener('paste', (ev) => {
-      const text = ev.clipboardData?.getData('Text')
+      const text = ev.clipboardData?.getData('Text');
       ;(gui.findLine('networkGroup').chooser as EBC).setValue(text)
     });
     this.showNetworkGroup()

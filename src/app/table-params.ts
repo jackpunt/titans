@@ -25,7 +25,7 @@ export class TP {
 
   static numPlayers = 2;
   static maxPlayers = 6;
-  static mapRows:number = 7;   /// standard: 6
+  static mapRows:number = 7;   /// standard: 6 (AnkhMap)
   static mapCols:number = 12;  /// standard: 15
   static nHexes = 6;
   static mHexes = 1;

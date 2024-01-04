@@ -280,7 +280,7 @@ export class Table extends EventDispatcher  {
    * @param dh
    * @returns
    */
-  bgXYWH(x0 = 0, y0 = 0, w0 = 14, h0 = .5, dw = 0, dh = 1.5) {
+  bgXYWH(x0 = -1, y0 = .5, w0 = 10, h0 = 1, dw = 0, dh = 0) {
     const hexMap = this.hexMap;
     // hexCont is offset to be centered on mapCont (center of hexCont is at mapCont[0,0])
     // mapCont is offset [0,0] to scaleCont
@@ -288,15 +288,14 @@ export class Table extends EventDispatcher  {
     this.scaleCont.addChild(mapCont);
 
     // background sized for hexMap:
-    const { x: hx, y: hy, width: rw, height: rh } = hexCont.getBounds();
-    const { x, y, w, h, dxdc: colw, dydr: rowh } = hexMap.xywh;
-    const [nrow, ncol] = hexMap.nRowCol;
-    const xywh: XYWH = { x: x0 * colw, y: y0 * rowh, w: rw + w0 * colw, h: rh + h0 * rowh }
+    const { width, height } = hexCont.getBounds();
+    const { dxdc, dydr } = hexMap.xywh;
+    const xywh: XYWH = { x: x0 * dxdc, y: y0 * dydr, w: width + w0 * dxdc, h: height + h0 * dydr }
     // align center of mapCont(0,0) == hexMap(center) with center of background
     mapCont.x = xywh.x + (xywh.w) / 2;
     mapCont.y = xywh.y + (xywh.h) / 2;
-    xywh.w += dw * colw;
-    xywh.h += dh * rowh;
+    xywh.w += dw * dxdc;
+    xywh.h += dh * dydr;
     return xywh;
   }
 
@@ -305,8 +304,9 @@ export class Table extends EventDispatcher  {
     const hexMap = this.hexMap = gamePlay.hexMap as any as HexMap<Hex2>; //  as AnkhMap<AnkhHex>
     hexMap.addToMapCont();                   // addToMapCont; make AnkhHex
     hexMap.makeAllDistricts();               //
+    this.gamePlay.recycleHex = this.makeRecycleHex(TP.nHexes + 3.2);
 
-    const xywh = this.bgXYWH(-1, .5, 10, 1, 0, 0);
+    const xywh = this.bgXYWH();              // override bgXYHW() to supply default/arg values
     const hexCont = this.hexMap.mapCont.hexCont, hexp = this.scaleCont;
     this.bgRect = this.setBackground(this.scaleCont, xywh); // bounded by xywh
     const { x, y, width, height } = hexCont.getBounds();
@@ -315,7 +315,6 @@ export class Table extends EventDispatcher  {
     this.layoutTable2(); // supply args (mapCont?) if necessary; make overlays, score panel, extra tracks (auction...)
     this.makePerPlayer();
 
-    this.gamePlay.recycleHex = this.makeRecycleHex();
     this.setupUndoButtons(55, 60, 45, xywh) // & enableHexInspector()
 
     const initialVis = false;
@@ -349,12 +348,12 @@ export class Table extends EventDispatcher  {
   }
   get panelHeight() { return (2 * TP.nHexes - 1) / 3 - .2; }
   // col==0 is on left edge of hexMap; The *center* hex is col == (nHexes-1)
-  panelLoc(pIndex: number, np = Math.min(Player.allPlayers.length, 6), r0 = TP.nHexes, dr = this.panelHeight + .2) {
-    const nh1 = TP.nHexes - 1, coff = TP.nHexes + 2;
+  panelLoc(pIndex: number, np = Math.min(Player.allPlayers.length, 6), r0 = this.hexMap.centerHex.row, dr = this.panelHeight + .2) {
+    const nh1 = this.hexMap.centerHex.col, coff = TP.nHexes + 2;
     const c0 = nh1 - coff, c1 = nh1 + coff;
     const locs = [
-      [r0 - dr, c0, -1], [r0, c0, -1], [r0 + dr, c0, -1],
-      [r0 - dr, c1, +1], [r0, c1, +1], [r0 + dr, c1, +1]];
+      [r0 - dr, c0, +1], [r0, c0, +1], [r0 + dr, c0, +1],
+      [r0 - dr, c1, -1], [r0, c1, -1], [r0 + dr, c1, -1]];
     const seq = [[], [0], [0, 3], [0, 3, 1], [0, 3, 4, 1], [0, 3, 4, 2, 1], [0, 3, 4, 5, 2, 1]];
     const seqn = seq[np], ndx = seqn[Math.min(pIndex, np - 1)];
     return locs[ndx];
@@ -364,10 +363,10 @@ export class Table extends EventDispatcher  {
   /** make player panels, placed at locations... */
   makePerPlayer() {
     this.allPlayerPanels.length = 0; // TODO: maybe deconstruct
-    const high = this.panelHeight, wide = 5;
+    const high = this.panelHeight, wide = 4.5;
     Player.allPlayers.forEach((player, pIndex) => {
       const [row, col, dir] = this.panelLoc(pIndex);
-      this.allPlayerPanels[pIndex] = player.panel = new PlayerPanel(this, player, high, wide, row-high/2, col-wide/2, dir);
+      this.allPlayerPanels[pIndex] = player.panel = new PlayerPanel(this, player, high, wide, row - high / 2, col - wide / 2, dir);
       player.makePlayerBits();
     });
   }
@@ -377,12 +376,10 @@ export class Table extends EventDispatcher  {
     if (!cont.parent) this.scaleCont.addChild(cont);
     const hexCont = this.hexMap.mapCont.hexCont;
     //if (cont.parent === hexCont) debugger;
-    const fcol = Math.floor((col)), ecol = fcol - fcol % 2, cresi = col - ecol;
-    const frow = Math.floor((row)), erow = frow - frow % 2, rresi = row - erow;
     const hexC = this.hexMap.centerHex;
-    const { x, y, w, h, dxdc, dydr } = hexC.xywh(undefined, undefined, erow, ecol);
-    const xx = x + cresi * dxdc;
-    const yy = y + rresi * dydr;
+    const { x, y, dxdc, dydr } = hexC.xywh();
+    const xx = x + (col - hexC.col) * dxdc;
+    const yy = y + (row - hexC.row) * dydr;
     hexCont.localToLocal(xx, yy, cont.parent, cont);
     if (cont.parent === hexCont) {
       cont.x = xx; cont.y = yy;
@@ -420,7 +417,7 @@ export class Table extends EventDispatcher  {
     return button;
   }
 
-  makeRecycleHex(row = 9.2, col = 0) {
+  makeRecycleHex(row = TP.nHexes + 3.2, col = 0) {
     const name = 'Recycle'
     const image = new Tile(name).addImageBitmap(name); // ignore Tile, get image.
     image.y = -TP.hexRad / 2; // recenter
@@ -437,7 +434,7 @@ export class Table extends EventDispatcher  {
 
   doneButton: UtilButton;
   doneClicked = (evt?: any) => {
-    this.doneButton.visible = false;
+    if (this.doneButton) this.doneButton.visible = false;
     this.gamePlay.phaseDone();   // <--- main doneButton does not supply 'panel'
   }
   addDoneButton(actionCont: Container, rh: number) {

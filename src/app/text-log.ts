@@ -1,6 +1,6 @@
 import { stime } from '@thegraid/easeljs-lib';
 import { Container, Text } from '@thegraid/easeljs-module';
-import { F } from './basic-intfs';
+import { F } from '@thegraid/common-lib';
 
 export class TextLog extends Container {
   constructor(public Aname: string, nlines = 6, public size: number = 30, public lead = 3) {
