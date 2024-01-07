@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { stime } from '@thegraid/easeljs-lib';
 //import { } from 'wicg-file-system-access';
+import { Title } from "@angular/platform-browser";
+import { buildURL, TP } from '@thegraid/hexlib';
 import { GameSetup } from '../game-setup';
-import { buildURL, TP } from '../table-params';
-import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'stage-comp',
