@@ -104,16 +104,17 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
   override makeDistrict(nh: number, district: number, mr: number, mc: number): T[] {
     // the nth row starts in column k (and extends to nh + k)
     const kary = [3, 4, 4, 5, 6, 6, 7, 7, 6, 5, 5, 4, 3, 3, 2, 2, 1];
+    const kval = (row: number) => {
+      const k = Math.round(kary[row + 7 - nh] * nh / 7); // something reasonable when (nh !== 7)
+      return [nh - k, nh + k] as [number, number];
+    }
     // even|odd hexes of selected rows are colored BLACK:
     const blk: { [index: number]: number | undefined } = { 2: 0, 3: 1, 5: 0, 6: 1, 8: 0, 9: 1, 11: 0, 12: 1, 14: 0, 15: 1 };
     const hexAry: T[] & { Mr?: number, Mc?: number } = Array<T>();
     hexAry['Mr'] = mr; hexAry['Mc'] = mc;
-    const colc = nh;                      // typically: 7
     const rowc = 2 * (nh - 1);
     for (let row = 1; row <= rowc; row++) {
-      const k = Math.round(kary[row] * nh / 7); // something reasonable when (nh !== 7)
-      const col0 = colc - k;
-      const coln = colc + k;
+      const [col0, coln] = kval(row);
       for (let col = col0; col <= coln; col++) {
         if ((row === rowc) && (col % 2 == 1)) continue;
         const bc = blk[row];
@@ -151,7 +152,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
 
   addBackgroundHex(color = C.PURPLE) {
     const ch = this.mapCont.hexMap.centerHex;
-    const hexMapBG = new HexShape((TP.nHexes + 5.5) * TP.hexRad, this.topoRot);
+    const hexMapBG = new HexShape((TP.nHexes * 1.8) * TP.hexRad, this.topoRot);
     hexMapBG.x = ch.x; hexMapBG.y = ch.y;
     hexMapBG.paint(color);
     this.mapCont.hexCont.addChildAt(hexMapBG, 0);
