@@ -1,10 +1,15 @@
-import { Constructor } from '@thegraid/common-lib';
+import { C, Constructor } from '@thegraid/common-lib';
 import { GameSetup as GameSetupLib, Hex, Scenario as Scenario0, TP } from '@thegraid/hexlib';
 import { TitanHex, TitanMap } from './titan-hex';
 
 export interface Scenario extends Scenario0 {
 
 };
+
+export class GS {
+  static hexk = .3;
+  static bgHexColor = C.BLACK;
+}
 
 /** initialize & reset & startup the application/game. */
 export class GameSetup extends GameSetupLib {
