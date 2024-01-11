@@ -1,7 +1,9 @@
-import { C, Constructor, stime } from "@thegraid/common-lib";
+import { Constructor, F, RC, stime } from "@thegraid/common-lib";
 import { Graphics } from "@thegraid/easeljs-module";
-import { H, Hex, Hex2, HexDir, HexMap, HexShape, TP } from "@thegraid/hexlib";
+import { H, Hex, Hex2, HexDir, HexMap, HexShape, NsDir, TP } from "@thegraid/hexlib";
+import { GS } from "./game-setup";
 
+type TerrId = 'U' | 'N' | 'M' | 'K' | 'P' | 'D' | 'W' | 'H' | 'T' | 'B' | 'J' | 'S';
 class TitanShape extends HexShape {
   hexType: 'A' | 'V' | 'B' = 'B';
 
@@ -15,7 +17,7 @@ class TitanShape extends HexShape {
   pt2(x: number): [number, number] { return [x, this.y2(x)] } // point on right line
 
   hexk(g: Graphics) {
-    const k = .3, dx = k / 2;  // sin(30) === 1/2 !
+    const k = GS.hexk, dx = k / 2;  // sin(30) === 1/2 !
     const x0 = .5 + k;  // bottom of 'A' (max y)
     const x1 = 1. + dx; // middle of 'A' (y = 0 - dx)
     const x2 = .5 - dx; // narrow of 'A' (min y)
@@ -79,6 +81,14 @@ export class TitanHex extends Hex2 {
     this.findLinkHex((lh, d) => (lh?.isBlack ?? false) && (dir = d, true));
     return dir;
   }
+
+  get color() { return this.hexShape.colorn; }
+
+  /** rcText always visible */
+  override showText(vis = this.rcText.visible): void {
+    this.rcText.visible = vis;
+    this.cont.updateCache();
+  }
 }
 
 export class TitanMap<T extends Hex> extends HexMap<T> {
@@ -132,14 +142,128 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
       this.paintAndCache(hex as any as TitanHex);
     })
     this.addBackgroundHex()
+    this.labelHexes();
     return hexAry;
+  }
+  showVis(vis = true) {
+    this.forEachHex<T>(hex => (hex as any as Hex2).showText(vis))
+  }
+
+  labelHexes() {
+    // let sn = 1; .slice(sn, sn + 1) + sn
+    this.rings.forEach((ring, nn) => {
+      let n = nn + 1, k = 0;
+      this.ringWalk(n, (h: Hex) => {
+        const hex = h as TitanHex;
+        const id = ring[k];
+        this.setTerrain(hex, id, k); // k is for debug/log
+        k = (k + 1) % ring.length;
+      })
+    })
+    const dirs: NsDir[][] = [['EN', 'ES'], ['ES', 'S'], ['S', 'WS'], ['WS', 'WN'], ['WN', 'N'], ['N', 'EN']];
+    let hex = this[1][3] as any as TitanHex;  // upper-left corner
+    this.edge.forEach((line, nl) => {
+      line.forEach((id, n) => {
+        this.setTerrain(hex, id, -nl);
+        const dir = dirs[nl][n % 2];
+        hex = hex.links[dir] as TitanHex;
+      })
+    })
+  }
+
+  setTerrain(hex: TitanHex, id: TerrId, k = 0) {
+    const color = this.terrainColor[id], hexType = hex?.hexType, tname = this.terrainNames[id];
+    // console.log(stime(this, '.labelHexes'), { k, id, color, hexType, hexid: hex?.Aname, hex });
+    if (hex === undefined) debugger;
+    if (id === 'K' && hexType !== 'B') debugger;
+    if (id !== 'K' && hexType === 'B') debugger;
+    if (id !== 'K') {
+      hex.hexShape.paint(color);
+      // if (id === 'S' || id === 'J') hex.distText.color = C.WHITE;
+      // if (id === 'P') hex.rcText.color = C.BLACK;
+      if (hex.distText.text.length < 3) { // do += only once!
+        hex.distText.y += TP.hexRad * (hexType === 'V' ? -.7 : .1);
+        hex.distText.font = F.fontSpec(18 * TP.hexRad / 60);
+        hex.rcText.y += TP.hexRad * (hexType === 'V' ? .5 : 0);
+      }
+      hex.distText.text = tname;
+      hex.distText.visible = true;
+    }
+  }
+
+  terrainNames = {
+    P: 'PLAINS', J: 'JUNGLE', B: 'BRUSH', M: 'MARSH', S: 'SWAMP', D: 'DESERT',
+    U: 'TUNDRA', T: 'TOWER', W: 'WOODS', H: 'HILLS', N: 'MOUNTAINS', K: 'BLACK',
+  }
+  terrainColorColossus = {
+    P: 'yellow', J: 'darkgreen', B: 'lime', M: 'indianred', S: 'blue', D: '#FFA200',
+    U: 'skyblue', T: 'lightgrey', W: 'olive', H: 'brown', N: 'red', K: 'BLACK', // redbrown, transparent
+  }
+  terrainColorOrig = {
+    P: 'gold', J: 'limegreen', B: '#BACD32', B1: 'yellowgreen', M: 'peru', S: 'skyblue', D: 'darkorange', //'#FFA200',
+    U: '#D0D0F0', T: '#E0E0D0', W: '#DDD88A', H: 'saddlebrown', N: '#FF343C', K: 'BLACK', // redbrown, transparent
+  }
+  terrainColor = this.terrainColorOrig;
+
+  ids: 'U' | 'N' | 'M' | 'K' | 'P' | 'D' | 'W' | 'H' | 'T' | 'B' | 'J' ;
+  // step = 'N', startDir = 'ES'
+  rings: TerrId[][] = [
+    ['U', 'N'], // [u, n] * 3
+    ['M', 'K', 'P', 'K'],  // r2: [mk,pk] * 3
+    ['K', 'D', 'W', 'K', 'S', 'H'], // r3: [kdw, ksh] * 3
+    ['T', 'P', 'K', 'B', 'T', 'M', 'K', 'B'],  // r4: [tpkb,tmkb] * 3
+    ['M', 'K', 'J', 'H', 'K', 'P', 'K', 'J', 'W', 'K'],  // r5: [mkjhk,pkjwk] * 3
+    // r6: [ksmkmb,kjbkpb,kdbkmb,ksbkpb,kjbkmb,kdbkpb] Use this.edge to fill outer rings.
+  ]
+  // r7: [...pd...,...ms...,...pj...,...md...,...pw...,...mj...]
+  edge: TerrId[][] = [
+    ['M', 'J', 'P', 'B', 'M', 'S', 'B', ], // en,es
+    ['P', 'D', 'M', 'B', 'P', 'J', 'B', ], // s,es
+    ['M', 'S', 'P', 'B', 'M', 'D', 'B', ], // ws,s
+    ['P', 'J', 'M', 'B', 'P', 'S', 'B', ], // wn,ws
+    ['M', 'D', 'P', 'B', 'M', 'J', 'B', ], // n,wn
+    ['P', 'S', 'M', 'B', 'P', 'D', 'B', ], // en,n
+  ];
+
+  /**
+   *
+   * @param n number of Hex to create
+   * @param rc {row, col} of current Hex of interest
+   * @param dir after Hex at rc, move rc by dir to next hex of interest
+   * @param f do 'whatever' and return the Hex at rc
+   * @returns RC of (n+1)th Hex on the line (where you typically change to next dir)
+   */
+  forHexesOnLine(n: number, rc: RC, dir: HexDir, f: (rc: RC) => Hex): RC {
+    for (let i = 0; i < n; i++) {
+      rc = this.nextRowCol(f(rc), dir);
+    }
+    return rc;
+  }
+
+  /**
+   * Apply f to each Hex on nth ring (starting from WS going N, then EN, ES, S, WS, WN)
+   * @param n ring number
+   * @param f (Hex) => void
+   */
+  ringWalk(n: number, f: (hex: Hex) => void) {
+    const dirs = this.linkDirs;     // HexDirs of the extant Topo.
+    const startDir = dirs[4]; // 'W' or 'WS' (so newHexesOnLine goes proper direction from each 'dirs')
+    const startHex = this.centerHex.nextHex(startDir, n) as Hex;
+    let rc = { row: startHex.row, col: startHex.col };
+    dirs.forEach(dir => {
+      rc = this.forHexesOnLine(n, rc, dir, (rc) => {
+        const hex = this[rc.row][rc.col];
+        f(hex);
+        return hex;
+      });
+    })
+    return rc;
   }
 
   /** set hexShape.hexType; paint(), hex.cont.setBounds(hexShape.getBounds()) */
   paintAndCache(hex: TitanHex) {
     const hexType = hex.hexType, hexShape = hex.hexShape as TitanShape;
     hexShape.hexType = hexType;
-    // hex.distText.text = `${hexShape.hexType}`;
     hexShape.paint(undefined, true);
     if (hexShape.hexType === 'A' || hexShape.hexType === 'V' || true) {
       // setBounds from TitanShape:
@@ -150,7 +274,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
     }
   }
 
-  addBackgroundHex(color = C.PURPLE) {
+  addBackgroundHex(color = GS.bgHexColor) {
     const ch = this.mapCont.hexMap.centerHex;
     const hexMapBG = new HexShape((TP.nHexes * 1.8) * TP.hexRad, this.topoRot);
     hexMapBG.x = ch.x; hexMapBG.y = ch.y;
