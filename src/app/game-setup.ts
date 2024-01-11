@@ -1,18 +1,27 @@
-import { GameSetup as GameSetup0, Scenario as Scenario0, TP } from '@thegraid/hexlib';
+import { Constructor } from '@thegraid/common-lib';
+import { GameSetup as GameSetupLib, Hex, Scenario as Scenario0, TP } from '@thegraid/hexlib';
+import { TitanHex, TitanMap } from './titan-hex';
 
 export interface Scenario extends Scenario0 {
 
 };
 
 /** initialize & reset & startup the application/game. */
-export class GameSetup extends GameSetup0 {
+export class GameSetup extends GameSetupLib {
 
-  override initialize(canvasId: string): void {
+  override initialize(canvasId: string, qParams = []): void {
     // TitanHex uses NsTopo, size 7.
     TP.useEwTopo = false;
     TP.nHexes = 7;
+    // TP.bgColor = 'BLACK'; // use addBackgroundHex()
     super.initialize(canvasId);
     return;
+  }
+
+  override startup(qParams?: { [key: string]: any; } | undefined): void {
+    this.hexMap = new TitanMap<Hex>(TP.hexRad, true, TitanHex as Constructor<Hex>)
+    this.nPlayers = Math.min(TP.maxPlayers, qParams?.['n'] ? Number.parseInt(qParams?.['n']) : 2);
+    this.startScenario({turn: 0, Aname: 'defaultScenario'});
   }
 
 }
