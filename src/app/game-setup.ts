@@ -9,6 +9,7 @@ export interface Scenario extends Scenario0 {
 export class GS {
   static hexk = .3;
   static bgHexColor = C.BLACK;
+  static exitDir = -1;
 }
 
 /** initialize & reset & startup the application/game. */

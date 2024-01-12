@@ -1,10 +1,13 @@
 import { C, Constructor, F, RC, XY, stime } from "@thegraid/common-lib";
 import { CenterText } from "@thegraid/easeljs-lib";
-import { Graphics, Point } from "@thegraid/easeljs-module";
-import { CircleShape, H, Hex, Hex2, HexDir, HexMap, HexShape, NsDir, TP } from "@thegraid/hexlib";
+import { Graphics, Point, Shape } from "@thegraid/easeljs-module";
+import { H, Hex, Hex2, HexDir, HexMap, HexShape, NsDir, TP } from "@thegraid/hexlib";
 import { GS } from "./game-setup";
 
 type TerrId = 'U' | 'N' | 'M' | 'K' | 'P' | 'D' | 'W' | 'H' | 'T' | 'B' | 'J' | 'S';
+type MoveId = 1 | 2 | 3 | 4; // [Block, Arch, Arrow, Triple-Arrow]; ['f' | 'c' | 'o' | 'p']
+type Exits = { [key in NsDir]?: MoveId };
+
 class TitanShape extends HexShape {
   hexType: 'A' | 'V' | 'B' = 'B';
 
@@ -59,9 +62,38 @@ class TitanShape extends HexShape {
   }
 }
 
+class TitanGraphics extends Graphics {
+  arrow(x = 0) {
+    const dx0 = .1, y = 0, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9;
+    const rv = this
+      .f(C.BLACK).mt(x - dx0, y + dy0).lt(x, y - dy0).lt(x + dx0, y + dy0).cp()
+      .f(C.WHITE).mt(x - dx1, y + dy0).lt(x, y - dy1).lt(x + dx1, y + dy0).cp();
+    // const rv2 = this.s(C.BLACK).f(C.WHITE).mt(x - dx0, y - dy0).lt(x, y + dy0).lt(x + dx0, y - dy0).es().cp();
+    return rv  as TitanGraphics;
+  };
+  arch(x = -.3) {
+    const dx0 = .1, y = 0, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI/180, a1 = 360 * Math.PI/180;
+    const rv = this
+      .f(C.BLACK).mt(x - dx0, y + dy0).lt(x - dx0, y - dy0).arc(x, y, dx0, a0, a1, false).lt(x + dx0, y + dy0).cp()
+      .f(C.WHITE).mt(x - dx1, y + dy0).lt(x - dx1, y - dy1).arc(x, y, dx1, a0, a1, false).lt(x + dx1, y + dy0).cp();
+      return rv  as TitanGraphics;
+  }
+  block(x = -.3) {
+    const dx0 = .1, y = 0, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI/180, a1 = 360 * Math.PI/180;
+    const rv = this
+      .f(C.BLACK).mt(x - dx0, y + dy0).lt(x - dx0, y - dy0).lt(x + dx0, y - dy0).lt(x + dx0, y + dy0).cp()
+      .f(C.WHITE).mt(x - dx1, y + dy0).lt(x - dx1, y - dy1).lt(x + dx1, y - dy1).lt(x + dx1, y + dy0).cp();
+      return rv  as TitanGraphics;
+  }
+  arrow3(dx = .3) {
+    return this.arrow(-dx).arrow(0).arrow(dx);
+  }
+}
+
 export class TitanHex extends Hex2 {
   terrId: TerrId = 'B'; // assume BLACK until assigned.
   topDir: NsDir = 'N';  // assume 'N' until assigned.
+  exits: Exits;
 
   override makeHexShape(shape: Constructor<HexShape> = TitanShape) {
     return super.makeHexShape(shape);
@@ -100,6 +132,53 @@ export class TitanHex extends Hex2 {
     point.y = this.hexShape.y - Math.cos(a) * h;
     return point as Point;
   }
+  static exitGraphics = [
+    undefined,
+    new TitanGraphics().arrow(-.3).arrow(0).arrow(.3),
+
+  ]
+  /** set moves and add Shapes indicating exits
+   *
+   * val 1: Block, 2: Arch, 3: Arrow, 4: tri-arrow
+   */
+  setExits(exits: Exits) {
+    this.exits = exits;
+    let key: NsDir;
+    for (key in exits) {
+      const val = exits[key], g = new TitanGraphics(), dx = -.3 * GS.exitDir;
+      const g1 =
+      (val === 1) ? g.block(dx) :
+        (val === 2) ? g.arch(dx) :
+          (val === 3) ? g.arrow(dx) :
+             (val == 4) ? g.arrow3(dx) :
+            g;
+      const eshape = new Shape(g1);
+      eshape.scaleX = eshape.scaleY = TP.hexRad * 1.4;
+      eshape.rotation = H.nsDirRot[key];
+      this.edgePoint(key, 1., eshape);
+      this.cont.addChild(eshape);
+      this.cont.localToLocal(eshape.x, eshape.y, this.mapCont.infCont, eshape);
+      this.mapCont.infCont.addChild(eshape);
+    }
+    // this.cont.stage?.update();
+  }
+
+  /**
+   *
+   * @param exits Exits from hex
+   * @param diri rotation from key-dir in exits
+   */
+  addExits(exits: Exits, diri: number) {
+    const exits2 = {} as Exits;
+    (Object.keys(exits) as (keyof Exits)[]).forEach((key) => {
+      const odirNdx = H.nsDirs.indexOf(key);
+      const ndirNdx = (odirNdx + diri) % 6;
+      const nKey = H.nsDirs[ndirNdx];
+      exits2[nKey] = exits[key];
+    });
+    this.setExits(exits2);
+  }
+
 }
 
 export class TitanMap<T extends Hex> extends HexMap<T> {
@@ -163,13 +242,23 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
   labelHexes() {
     // let sn = 1; .slice(sn, sn + 1) + sn
     this.rings.forEach((ring, n0) => {
-      let n = n0 + 1, d = 0;
+      /** n is the ring to do; rings[n0] drive ringWalk(n)*/
+      let n = n0 + 1;  // n is ring to do; rings[n0] drive ringWalk(n)
+      let d = 0;       // d is which ring element: 0..2n -1 (2 lines! 2 dirs!)
+      // ringWalk(n) selects each Hex on that ring, and invokes our function:
       this.ringWalk(n, (h: Hex, dir) => {
-        const k = d % ring.length; // k: 0..n-1, d: 0..2*n-1,
-        const m = d % (ring.length / 2);
         const hex = h as TitanHex;
-        const id = ring[k]
+        // for each (hex, dir) set attrs of hex based on rotation from dir
+        const k = d % ring.length;       // k: 0..n-1, d: 0..2*n-1,
+        const m = d % (ring.length / 2); // m: 0..(n-1)/2; the *pattern* length
+        const id = ring[k];              // terrain type
         const diri = H.nsDirs.indexOf(dir as NsDir); // [N, EN, ES, S, WS, WN]
+
+        const exitsAry = this.exits[n0];  // cycle through this array of Moves
+        const exits = exitsAry[k % exitsAry.length]; // allowed moves from hex
+        hex.addExits(exits, diri);
+
+        // compute topDir from relative rotation...
         const doff = [0, 1, 4, d + Math.floor(d / 3) * 3, [1,4,0,5,][m], [4,0,1,2,0][m], 0][n];
         const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
         // (n == 3) && console.log(stime(this, `.label:`), { d, k, dir, doff, topDir });
@@ -184,6 +273,11 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
       line.forEach((id, n) => {
         const dir = dirs[nl][n % 2];
         const diri = H.nsDirs.indexOf(dir as NsDir); // [N, EN, ES, S, WS, WN]
+
+        const exitsAry = this.exits[5];  // cycle through this array of Moves
+        const exits = exitsAry[n % exitsAry.length]; // allowed moves from hex
+        hex.addExits(exits, nl);
+
         const doff = [1, 1, 5, 1, 1, 1, 5][n];
         const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
         this.setTerrain(hex, id, -nl, topDir);
@@ -212,13 +306,13 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
         hex.rcText.y += TP.hexRad * (hexType === 'V' ? .5 : 0);
         hex.topDir = topDir;
         const textRot = { N: 0, S: 0, EN: 60, ES: -60, WN: -60, WS: 60 };
-        const tmark = new CenterText(`${123}`, F.fontSpec(16 * TP.hexRad / 60));
-        tmark.rotation = textRot[topDir];
-        hex.edgePoint(topDir, 1.05, tmark);
-        hex.cont.addChild(tmark);
+        const hexid = new CenterText(`${123}`, F.fontSpec(16 * TP.hexRad / 60));
+        hexid.rotation = textRot[topDir];
+        hex.edgePoint(topDir, 1.05, hexid);
+        hex.cont.addChild(hexid);
         // position label [distText]
         const ldir = H.dirRevNS[topDir];
-        hex.edgePoint(ldir, .7, hex.distText);
+        hex.edgePoint(ldir, .6, hex.distText);
         hex.distText.rotation = textRot[ldir];
         hex.distText.font = F.fontSpec(18 * TP.hexRad / 60);
       }
@@ -250,6 +344,17 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
     ['T', 'P', 'K', 'B', 'T', 'M', 'K', 'B'],  // r4: [tpkb,tmkb] * 3
     ['M', 'K', 'J', 'H', 'K', 'P', 'K', 'J', 'W', 'K'],  // r5: [mkjhk,pkjwk] * 3
     // r6: [ksmkmb,kjbkpb,kdbkmb,ksbkpb,kjbkmb,kdbkpb] Use this.edge to fill outer rings.
+  ];
+  // 1: Block, 2: Arch, 3: Arrow, 4: tri-arrow
+  /** exits for each hex in rings; pattern repeats for each line */
+  exits: Exits[][] = [
+    [{ WS: 1, N: 3, ES: 3 }], // rotate dirs each line segment!
+    [{ EN: 2, S: 4 }, {}],
+    [{}, { N: 2, ES: 4 }, {S: 2, WN: 4}],
+    [{ N: 3, ES: 3, WS: 3 }, { S: 2, EN: 4 }, {}, { N: 2, WS: 4 }],
+    [{ EN: 2, WN: 4 }, {}, { WS: 1, ES: 4 }, { WN: 1, S: 4 }, {}],
+    // #5 for all edge lines:
+    [{ EN: 4 }, { ES: 4 }, { EN: 4, S: 2 }, { ES: 4 }, { EN: 4, S: 4 }, { ES: 4 }, { EN: 4, S: 2 }],
   ]
   // r7: [...pd...,...ms...,...pj...,...md...,...pw...,...mj...]
   edge: TerrId[][] = [
