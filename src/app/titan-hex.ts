@@ -8,6 +8,7 @@ type TerrId = 'U' | 'N' | 'M' | 'K' | 'P' | 'D' | 'W' | 'H' | 'T' | 'B' | 'J' | 
 type MoveId = 1 | 2 | 3 | 4; // [Block, Arch, Arrow, Triple-Arrow]; ['f' | 'c' | 'o' | 'p']
 type Exits = { [key in NsDir]?: MoveId };
 
+/** extended Hexagon Shape for TitanMap. */
 class TitanShape extends HexShape {
   hexType: 'A' | 'V' | 'B' = 'B';
 
@@ -62,7 +63,21 @@ class TitanShape extends HexShape {
   }
 }
 
+
+/** Graphics for exit arrows */
 class TitanGraphics extends Graphics {
+  static exitGraphics: TitanGraphics[];
+  static setExitGraphics() {
+    const dx = -.3 * GS.exitDir;
+    TitanGraphics.exitGraphics = [
+      new TitanGraphics(),
+      new TitanGraphics().block(dx),
+      new TitanGraphics().arch(dx),
+      new TitanGraphics().arrow(dx),
+      new TitanGraphics().arrow3(dx),
+    ];
+  }
+
   arrow(x = 0) {
     const dx0 = .1, y = 0, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9;
     const rv = this
@@ -95,6 +110,7 @@ export class TitanHex extends Hex2 {
   topDir: NsDir = 'N';  // assume 'N' until assigned.
   exits: Exits;
 
+  /** interpose to make TitanShape */
   override makeHexShape(shape: Constructor<HexShape> = TitanShape) {
     return super.makeHexShape(shape);
   }
@@ -132,11 +148,7 @@ export class TitanHex extends Hex2 {
     point.y = this.hexShape.y - Math.cos(a) * h;
     return point as Point;
   }
-  static exitGraphics = [
-    undefined,
-    new TitanGraphics().arrow(-.3).arrow(0).arrow(.3),
 
-  ]
   /** set moves and add Shapes indicating exits
    *
    * val 1: Block, 2: Arch, 3: Arrow, 4: tri-arrow
@@ -145,14 +157,8 @@ export class TitanHex extends Hex2 {
     this.exits = exits;
     let key: NsDir;
     for (key in exits) {
-      const val = exits[key], g = new TitanGraphics(), dx = -.3 * GS.exitDir;
-      const g1 =
-      (val === 1) ? g.block(dx) :
-        (val === 2) ? g.arch(dx) :
-          (val === 3) ? g.arrow(dx) :
-             (val == 4) ? g.arrow3(dx) :
-            g;
-      const eshape = new Shape(g1);
+      const val = exits[key] ?? 0, g = new TitanGraphics(), dx = -.3 * GS.exitDir;
+      const eshape = new Shape(TitanGraphics.exitGraphics[val]);
       eshape.scaleX = eshape.scaleY = TP.hexRad * 1.4;
       eshape.rotation = H.nsDirRot[key];
       this.edgePoint(key, 1., eshape);
@@ -184,6 +190,7 @@ export class TitanHex extends Hex2 {
 export class TitanMap<T extends Hex> extends HexMap<T> {
   constructor(radius = TP.hexRad, addToMapCont: boolean, hexC: Constructor<Hex>) {
     super(radius, addToMapCont, hexC);
+    TitanGraphics.setExitGraphics();
     console.log(stime(this, `.constructor: TitanMap constructor:`), hexC.name)
   }
 
@@ -246,8 +253,8 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
       let n = n0 + 1;  // n is ring to do; rings[n0] drive ringWalk(n)
       let d = 0;       // d is which ring element: 0..2n -1 (2 lines! 2 dirs!)
       // ringWalk(n) selects each Hex on that ring, and invokes our function:
-      this.ringWalk(n, (h: Hex, dir) => {
-        const hex = h as TitanHex;
+      this.ringWalk(n, (rc: RC, dir) => {
+        const hex = this[rc.row][rc.col] as any as TitanHex;
         // for each (hex, dir) set attrs of hex based on rotation from dir
         const k = d % ring.length;       // k: 0..n-1, d: 0..2*n-1,
         const m = d % (ring.length / 2); // m: 0..(n-1)/2; the *pattern* length
@@ -374,7 +381,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
    * @param f do 'whatever' and return the Hex at rc
    * @returns RC of (n+1)th Hex on the line (where you typically change to next dir)
    */
-  forHexesOnLine(n: number, rc: RC, dir: HexDir, f: (rc: RC) => Hex): RC {
+  forRCsOnLine(n: number, rc: RC, dir: HexDir, f: (rc: RC) => RC): RC {
     for (let i = 0; i < n; i++) {
       rc = this.nextRowCol(f(rc), dir);
     }
@@ -382,20 +389,20 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
   }
 
   /**
-   * Apply f to each Hex on nth ring (starting from WS going N, then EN, ES, S, WS, WN)
+   * Apply f to each RC on nth ring (starting from WS going N, then EN, ES, S, WS, WN)
    * @param n ring number
-   * @param f (Hex) => void
+   * @param f (RC) => void
+   * @return the *next* RC on the final line (so can easily spiral)
    */
-  ringWalk(n: number, f: (hex: Hex, dir: HexDir) => void) {
+  ringWalk(n: number, f: (rc: RC, dir: HexDir) => void) {
     const dirs = this.linkDirs;     // HexDirs of the extant Topo.
     const startDir = dirs[4]; // 'W' or 'WS' (so newHexesOnLine goes proper direction from each 'dirs')
     const startHex = this.centerHex.nextHex(startDir, n) as Hex;
     let rc = { row: startHex.row, col: startHex.col };
     dirs.forEach(dir => {
-      rc = this.forHexesOnLine(n, rc, dir, (rc) => {
-        const hex = this[rc.row][rc.col];
-        f(hex, dir);
-        return hex;
+      rc = this.forRCsOnLine(n, rc, dir, (rc) => {
+        f(rc, dir);
+        return rc;
       });
     })
     return rc;
