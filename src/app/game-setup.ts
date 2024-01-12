@@ -8,7 +8,9 @@ export interface Scenario extends Scenario0 {
 
 export class GS {
   static hexk = .3;
+  static transp = 'rgba(0,0,0,0)';
   static bgHexColor = C.BLACK;
+  static blkHexColor = GS.transp;
   static exitDir = -1;
 }
 

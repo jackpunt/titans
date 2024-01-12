@@ -44,7 +44,6 @@ class TitanShape extends HexShape {
    * Draw a Hexagon 1/60th inside the given radius.
    * overrides should include call to setHexBounds(radius, angle)
    * or in other way setBounds().
-   * TODO: draw extended hexagon (truncated triangle?)
    */
   override hscgf(color: string, g0 = this.graphics) {
     return (this.hexType === 'B') ? this.bscgf(color, g0) : this.tscgf(color, g0);
@@ -57,7 +56,7 @@ class TitanShape extends HexShape {
   }
   // BlackShape:
   bscgf(color: string, g0 = this.graphics) {
-    const rad = Math.floor(this.radius * 59 / 60);
+    const rad = Math.floor(this.radius * 59 / 60); // with hexk = .3 only ~43.5/60 show
     this.scaleX = this.scaleY = 1;
     return g0.f(color).dp(0, 0, rad, 6, 0, this.tilt); // 30 or 0
   }
@@ -141,14 +140,6 @@ export class TitanHex extends Hex2 {
     this.cont.updateCache();
   }
 
-  // TODO: include in next hexlib
-  override edgePoint(dir: HexDir, k = 1, point: XY = new Point()) {
-    const a = H.nsDirRot[dir as NsDir] * H.degToRadians, h = k * this.radius * H.sqrt3_2;
-    point.x = this.hexShape.x + Math.sin(a) * h;
-    point.y = this.hexShape.y - Math.cos(a) * h;
-    return point as Point;
-  }
-
   /** set moves and add Shapes indicating exits
    *
    * val 1: Block, 2: Arch, 3: Arrow, 4: tri-arrow
@@ -194,12 +185,6 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
     console.log(stime(this, `.constructor: TitanMap constructor:`), hexC.name)
   }
 
-  override addToMapCont(hexC?: Constructor<T> | undefined): this {
-    this.mapCont.removeAllChildren();
-    super.addToMapCont(hexC);
-    return this;
-  }
-
   /**
    * make district (a meta-hex) of size nh, a meta-loc: [mr, mc]
    * @param nh size: order of the hex (TP.nHexes = 7)
@@ -229,7 +214,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
         const hex = this.addHex(row, col, district);
         if (hex instanceof TitanHex && bh) {
           hex.isBlack = true;
-          hex.hexShape.paint('rgba(0,0,0,0)', true);
+          hex.hexShape.paint(GS.blkHexColor, true);
           hex.cont.parent.addChildAt(hex.cont, 0); // put black in the back of hexCont.
         }
         hexAry.push(hex);
@@ -241,9 +226,6 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
     this.addBackgroundHex()
     this.labelHexes();
     return hexAry;
-  }
-  showVis(vis = true) {
-    this.forEachHex<T>(hex => (hex as any as Hex2).showText(vis))
   }
 
   labelHexes() {
@@ -372,41 +354,6 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
     ['M', 'D', 'P', 'B', 'M', 'J', 'B', ], // n,wn
     ['P', 'S', 'M', 'B', 'P', 'D', 'B', ], // en,n
   ];
-
-  /**
-   *
-   * @param n number of Hex to create
-   * @param rc {row, col} of current Hex of interest
-   * @param dir after Hex at rc, move rc by dir to next hex of interest
-   * @param f do 'whatever' and return the Hex at rc
-   * @returns RC of (n+1)th Hex on the line (where you typically change to next dir)
-   */
-  forRCsOnLine(n: number, rc: RC, dir: HexDir, f: (rc: RC) => RC): RC {
-    for (let i = 0; i < n; i++) {
-      rc = this.nextRowCol(f(rc), dir);
-    }
-    return rc;
-  }
-
-  /**
-   * Apply f to each RC on nth ring (starting from WS going N, then EN, ES, S, WS, WN)
-   * @param n ring number
-   * @param f (RC) => void
-   * @return the *next* RC on the final line (so can easily spiral)
-   */
-  ringWalk(n: number, f: (rc: RC, dir: HexDir) => void) {
-    const dirs = this.linkDirs;     // HexDirs of the extant Topo.
-    const startDir = dirs[4]; // 'W' or 'WS' (so newHexesOnLine goes proper direction from each 'dirs')
-    const startHex = this.centerHex.nextHex(startDir, n) as Hex;
-    let rc = { row: startHex.row, col: startHex.col };
-    dirs.forEach(dir => {
-      rc = this.forRCsOnLine(n, rc, dir, (rc) => {
-        f(rc, dir);
-        return rc;
-      });
-    })
-    return rc;
-  }
 
   /** set hexShape.hexType; paint(), hex.cont.setBounds(hexShape.getBounds()) */
   paintAndCache(hex: TitanHex) {
