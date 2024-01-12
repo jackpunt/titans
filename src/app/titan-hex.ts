@@ -1,6 +1,7 @@
-import { Constructor, F, RC, stime } from "@thegraid/common-lib";
-import { Graphics } from "@thegraid/easeljs-module";
-import { H, Hex, Hex2, HexDir, HexMap, HexShape, NsDir, TP } from "@thegraid/hexlib";
+import { C, Constructor, F, RC, XY, stime } from "@thegraid/common-lib";
+import { CenterText } from "@thegraid/easeljs-lib";
+import { Graphics, Point } from "@thegraid/easeljs-module";
+import { CircleShape, H, Hex, Hex2, HexDir, HexMap, HexShape, NsDir, TP } from "@thegraid/hexlib";
 import { GS } from "./game-setup";
 
 type TerrId = 'U' | 'N' | 'M' | 'K' | 'P' | 'D' | 'W' | 'H' | 'T' | 'B' | 'J' | 'S';
@@ -59,6 +60,8 @@ class TitanShape extends HexShape {
 }
 
 export class TitanHex extends Hex2 {
+  terrId: TerrId = 'B'; // assume BLACK until assigned.
+  topDir: NsDir = 'N';  // assume 'N' until assigned.
 
   override makeHexShape(shape: Constructor<HexShape> = TitanShape) {
     return super.makeHexShape(shape);
@@ -88,6 +91,14 @@ export class TitanHex extends Hex2 {
   override showText(vis = this.rcText.visible): void {
     this.rcText.visible = vis;
     this.cont.updateCache();
+  }
+
+  // TODO: include in next hexlib
+  override edgePoint(dir: HexDir, k = 1, point: XY = new Point()) {
+    const a = H.nsDirRot[dir as NsDir] * H.degToRadians, h = k * this.radius * H.sqrt3_2;
+    point.x = this.hexShape.x + Math.sin(a) * h;
+    point.y = this.hexShape.y - Math.cos(a) * h;
+    return point as Point;
   }
 }
 
@@ -151,29 +162,44 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
 
   labelHexes() {
     // let sn = 1; .slice(sn, sn + 1) + sn
-    this.rings.forEach((ring, nn) => {
-      let n = nn + 1, k = 0;
-      this.ringWalk(n, (h: Hex) => {
+    this.rings.forEach((ring, n0) => {
+      let n = n0 + 1, d = 0;
+      this.ringWalk(n, (h: Hex, dir) => {
+        const k = d % ring.length; // k: 0..n-1, d: 0..2*n-1,
+        const m = d % (ring.length / 2);
         const hex = h as TitanHex;
-        const id = ring[k];
-        this.setTerrain(hex, id, k); // k is for debug/log
-        k = (k + 1) % ring.length;
+        const id = ring[k]
+        const diri = H.nsDirs.indexOf(dir as NsDir); // [N, EN, ES, S, WS, WN]
+        const doff = [0, 1, 4, d + Math.floor(d / 3) * 3, [1,4,0,5,][m], [4,0,1,2,0][m], 0][n];
+        const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
+        // (n == 3) && console.log(stime(this, `.label:`), { d, k, dir, doff, topDir });
+        hex.rcText.text += `-r${n}`
+        this.setTerrain(hex, id, k, topDir);
+        d = d + 1;
       })
     })
     const dirs: NsDir[][] = [['EN', 'ES'], ['ES', 'S'], ['S', 'WS'], ['WS', 'WN'], ['WN', 'N'], ['N', 'EN']];
     let hex = this[1][3] as any as TitanHex;  // upper-left corner
     this.edge.forEach((line, nl) => {
       line.forEach((id, n) => {
-        this.setTerrain(hex, id, -nl);
         const dir = dirs[nl][n % 2];
+        const diri = H.nsDirs.indexOf(dir as NsDir); // [N, EN, ES, S, WS, WN]
+        const doff = [1, 1, 5, 1, 1, 1, 5][n];
+        const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
+        this.setTerrain(hex, id, -nl, topDir);
         hex = hex.links[dir] as TitanHex;
       })
     })
   }
 
-  setTerrain(hex: TitanHex, id: TerrId, k = 0) {
+  /** set color, distText, and top-mark on hex, based on Id
+   * @param id the designated TerrId
+   * @param ring identifies which ring is being placed, < 0 for edge strips.
+   * @param topDir identifies edge at top of BattleMap
+   */
+  setTerrain(hex: TitanHex, id: TerrId, ring = 0, topDir: NsDir = 'N') {
     const color = this.terrainColor[id], hexType = hex?.hexType, tname = this.terrainNames[id];
-    // console.log(stime(this, '.labelHexes'), { k, id, color, hexType, hexid: hex?.Aname, hex });
+    // console.log(stime(this, '.labelHexes'), { k: ring, id, color, hexType, hexid: hex?.Aname, hex });
     if (hex === undefined) debugger;
     if (id === 'K' && hexType !== 'B') debugger;
     if (id !== 'K' && hexType === 'B') debugger;
@@ -181,10 +207,20 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
       hex.hexShape.paint(color);
       // if (id === 'S' || id === 'J') hex.distText.color = C.WHITE;
       // if (id === 'P') hex.rcText.color = C.BLACK;
-      if (hex.distText.text.length < 3) { // do += only once!
-        hex.distText.y += TP.hexRad * (hexType === 'V' ? -.7 : .1);
-        hex.distText.font = F.fontSpec(18 * TP.hexRad / 60);
+      if (hex.terrId === 'B') {      // do += only once!
+        hex.terrId = id;
         hex.rcText.y += TP.hexRad * (hexType === 'V' ? .5 : 0);
+        hex.topDir = topDir;
+        const textRot = { N: 0, S: 0, EN: 60, ES: -60, WN: -60, WS: 60 };
+        const tmark = new CenterText(`${123}`, F.fontSpec(16 * TP.hexRad / 60));
+        tmark.rotation = textRot[topDir];
+        hex.edgePoint(topDir, 1.05, tmark);
+        hex.cont.addChild(tmark);
+        // position label [distText]
+        const ldir = H.dirRevNS[topDir];
+        hex.edgePoint(ldir, .7, hex.distText);
+        hex.distText.rotation = textRot[ldir];
+        hex.distText.font = F.fontSpec(18 * TP.hexRad / 60);
       }
       hex.distText.text = tname;
       hex.distText.visible = true;
@@ -245,7 +281,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
    * @param n ring number
    * @param f (Hex) => void
    */
-  ringWalk(n: number, f: (hex: Hex) => void) {
+  ringWalk(n: number, f: (hex: Hex, dir: HexDir) => void) {
     const dirs = this.linkDirs;     // HexDirs of the extant Topo.
     const startDir = dirs[4]; // 'W' or 'WS' (so newHexesOnLine goes proper direction from each 'dirs')
     const startHex = this.centerHex.nextHex(startDir, n) as Hex;
@@ -253,7 +289,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
     dirs.forEach(dir => {
       rc = this.forHexesOnLine(n, rc, dir, (rc) => {
         const hex = this[rc.row][rc.col];
-        f(hex);
+        f(hex, dir);
         return hex;
       });
     })
