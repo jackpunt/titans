@@ -1,7 +1,7 @@
-import { C, Constructor, F, RC, XY, stime } from "@thegraid/common-lib";
+import { C, Constructor, F, RC, stime } from "@thegraid/common-lib";
 import { CenterText } from "@thegraid/easeljs-lib";
-import { Graphics, Point, Shape } from "@thegraid/easeljs-module";
-import { H, Hex, Hex2, HexDir, HexMap, HexShape, NsDir, TP } from "@thegraid/hexlib";
+import { Bitmap, Graphics, Shape, Text } from "@thegraid/easeljs-module";
+import { AliasLoader, H, Hex, Hex2, HexDir, HexMap, HexShape, NsDir, TP } from "@thegraid/hexlib";
 import { GS } from "./game-setup";
 
 type TerrId = 'U' | 'N' | 'M' | 'K' | 'P' | 'D' | 'W' | 'H' | 'T' | 'B' | 'J' | 'S';
@@ -77,30 +77,37 @@ class TitanGraphics extends Graphics {
     ];
   }
 
-  arrow(x = 0) {
-    const dx0 = .1, y = 0, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9;
+  constructor(public incolor = C.WHITE) { super();  }
+
+  exit(id: MoveId | 0, dx = -.3) {
+    return [this.zero, this.block, this.arch, this.arrow, this.arrow3][id].call(this, dx);
+  }
+
+  zero(x = 0, incolor = this.incolor) { return this; }
+
+  arrow(x = 0, incolor = this.incolor) {
+    const dx0 = .1, y0 = -.0, y1 = y0 + .01, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9;
     const rv = this
-      .f(C.BLACK).mt(x - dx0, y + dy0).lt(x, y - dy0).lt(x + dx0, y + dy0).cp()
-      .f(C.WHITE).mt(x - dx1, y + dy0).lt(x, y - dy1).lt(x + dx1, y + dy0).cp();
-    // const rv2 = this.s(C.BLACK).f(C.WHITE).mt(x - dx0, y - dy0).lt(x, y + dy0).lt(x + dx0, y - dy0).es().cp();
-    return rv  as TitanGraphics;
+      .f(C.WHITE).mt(x - dx0, y0 + dy0).lt(x, y0 - dy0).lt(x + dx0, y0 + dy0).cp()
+      .f(incolor).mt(x - dx1, y1 + dy0).lt(x, y1 - dy1).lt(x + dx1, y1 + dy0).cp();
+    return rv as TitanGraphics;
   };
-  arch(x = -.3) {
-    const dx0 = .1, y = 0, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI/180, a1 = 360 * Math.PI/180;
+  arch(x = -.3, incolor = this.incolor) {
+    const dx0 = .1, y0 = 0, y1 = y0 + .01, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI / 180, a1 = 360 * Math.PI / 180;
     const rv = this
-      .f(C.BLACK).mt(x - dx0, y + dy0).lt(x - dx0, y - dy0).arc(x, y, dx0, a0, a1, false).lt(x + dx0, y + dy0).cp()
-      .f(C.WHITE).mt(x - dx1, y + dy0).lt(x - dx1, y - dy1).arc(x, y, dx1, a0, a1, false).lt(x + dx1, y + dy0).cp();
-      return rv  as TitanGraphics;
+      .f(C.WHITE).mt(x - dx0, y0 + dy0).lt(x - dx0, y0 - dy0).arc(x, y0, dx0, a0, a1, false).lt(x + dx0, y0 + dy0).cp()
+      .f(incolor).mt(x - dx1, y1 + dy0).lt(x - dx1, y1 - dy1).arc(x, y0, dx1, a0, a1, false).lt(x + dx1, y1 + dy0).cp();
+    return rv as TitanGraphics;
   }
-  block(x = -.3) {
-    const dx0 = .1, y = 0, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI/180, a1 = 360 * Math.PI/180;
+  block(x = -.3, incolor = this.incolor) {
+    const dx0 = .1, y0 = 0, y1 = y0 + .002, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI / 180, a1 = 360 * Math.PI / 180;
     const rv = this
-      .f(C.BLACK).mt(x - dx0, y + dy0).lt(x - dx0, y - dy0).lt(x + dx0, y - dy0).lt(x + dx0, y + dy0).cp()
-      .f(C.WHITE).mt(x - dx1, y + dy0).lt(x - dx1, y - dy1).lt(x + dx1, y - dy1).lt(x + dx1, y + dy0).cp();
-      return rv  as TitanGraphics;
+      .f(C.WHITE).mt(x - dx0, y0 + dy0).lt(x - dx0, y0 - dy0).lt(x + dx0, y0 - dy0).lt(x + dx0, y0 + dy0).cp()
+      .f(incolor).mt(x - dx1, y1 + dy0).lt(x - dx1, y1 - dy1).lt(x + dx1, y1 - dy1).lt(x + dx1, y1 + dy0).cp();
+    return rv as TitanGraphics;
   }
-  arrow3(dx = .3) {
-    return this.arrow(-dx).arrow(0).arrow(dx);
+  arrow3(dx = .3, incolor = this.incolor) {
+    return this.arrow(-dx, incolor).arrow(0, incolor).arrow(dx, incolor);
   }
 }
 
@@ -108,6 +115,7 @@ export class TitanHex extends Hex2 {
   terrId: TerrId = 'B'; // assume BLACK until assigned.
   topDir: NsDir = 'N';  // assume 'N' until assigned.
   exits: Exits;
+  hexid: Text;          // contains canonical serial number, and indicates top of BattleMap.
 
   /** interpose to make TitanShape */
   override makeHexShape(shape: Constructor<HexShape> = TitanShape) {
@@ -144,12 +152,12 @@ export class TitanHex extends Hex2 {
    *
    * val 1: Block, 2: Arch, 3: Arrow, 4: tri-arrow
    */
-  setExits(exits: Exits) {
+  setExits(exits = this.exits) {
     this.exits = exits;
-    let key: NsDir;
-    for (key in exits) {
-      const val = exits[key] ?? 0, g = new TitanGraphics(), dx = -.3 * GS.exitDir;
-      const eshape = new Shape(TitanGraphics.exitGraphics[val]);
+    let key: keyof Exits; for (key in exits) {
+      const val = exits[key] ?? 0;
+      const g = new TitanGraphics(this.color).exit(val);
+      const eshape = new Shape(g);
       eshape.scaleX = eshape.scaleY = TP.hexRad * 1.4;
       eshape.rotation = H.nsDirRot[key];
       this.edgePoint(key, 1., eshape);
@@ -157,7 +165,6 @@ export class TitanHex extends Hex2 {
       this.cont.localToLocal(eshape.x, eshape.y, this.mapCont.infCont, eshape);
       this.mapCont.infCont.addChild(eshape);
     }
-    // this.cont.stage?.update();
   }
 
   /**
@@ -167,18 +174,33 @@ export class TitanHex extends Hex2 {
    */
   addExits(exits: Exits, diri: number) {
     const exits2 = {} as Exits;
-    (Object.keys(exits) as (keyof Exits)[]).forEach((key) => {
+    let key: keyof Exits; for (key in exits) {
       const odirNdx = H.nsDirs.indexOf(key);
       const ndirNdx = (odirNdx + diri) % 6;
       const nKey = H.nsDirs[ndirNdx];
       exits2[nKey] = exits[key];
-    });
+    };
     this.setExits(exits2);
   }
 
+  addImage() {
+    const name = this.distText.text;         // 'Brush' or whatever;
+    const img_name = (this.distText.y > this.hexid.y) ? `${name}_i` : `${name}`;
+    const bm = AliasLoader.loader.getBitmap(img_name, 2 * TP.hexRad); // offset and scaled.
+    if (bm.image) {
+      bm.name = name;
+      bm.regX = - bm.x / bm.scaleX;
+      bm.regY = - bm.y / bm.scaleY;
+      bm.x = bm.y = 0;
+      bm.rotation = this.distText.rotation;
+      this.distText.visible = false;
+    }
+    this.cont.addChild(bm as Bitmap);
+    this.cont.updateCache();
+  }
 }
 
-export class TitanMap<T extends Hex> extends HexMap<T> {
+export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
   constructor(radius = TP.hexRad, addToMapCont: boolean, hexC: Constructor<Hex>) {
     super(radius, addToMapCont, hexC);
     TitanGraphics.setExitGraphics();
@@ -243,16 +265,16 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
         const id = ring[k];              // terrain type
         const diri = H.nsDirs.indexOf(dir as NsDir); // [N, EN, ES, S, WS, WN]
 
+        // compute topDir from relative rotation...
+        const doff = [0, 1, 4, d + Math.floor(d / 3) * 3, [1,4,0,5,][m], [4,0,1,2,0][m], 0][n];
+        const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
+        hex.rcText.text += `-r${n}`
+        this.setTerrain(hex, id, k, topDir);
+
         const exitsAry = this.exits[n0];  // cycle through this array of Moves
         const exits = exitsAry[k % exitsAry.length]; // allowed moves from hex
         hex.addExits(exits, diri);
 
-        // compute topDir from relative rotation...
-        const doff = [0, 1, 4, d + Math.floor(d / 3) * 3, [1,4,0,5,][m], [4,0,1,2,0][m], 0][n];
-        const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
-        // (n == 3) && console.log(stime(this, `.label:`), { d, k, dir, doff, topDir });
-        hex.rcText.text += `-r${n}`
-        this.setTerrain(hex, id, k, topDir);
         d = d + 1;
       })
     })
@@ -263,13 +285,14 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
         const dir = dirs[nl][n % 2];
         const diri = H.nsDirs.indexOf(dir as NsDir); // [N, EN, ES, S, WS, WN]
 
-        const exitsAry = this.exits[5];  // cycle through this array of Moves
-        const exits = exitsAry[n % exitsAry.length]; // allowed moves from hex
-        hex.addExits(exits, nl);
-
         const doff = [1, 1, 5, 1, 1, 1, 5][n];
         const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
         this.setTerrain(hex, id, -nl, topDir);
+
+        const exitsAry = this.exits[5];  // cycle through this array of Moves
+        const exits = exitsAry[n % exitsAry.length]; // allowed moves from hex
+        if (!hex.exits) hex.addExits(exits, nl);
+
         hex = hex.links[dir] as TitanHex;
       })
     })
@@ -281,7 +304,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
    * @param topDir identifies edge at top of BattleMap
    */
   setTerrain(hex: TitanHex, id: TerrId, ring = 0, topDir: NsDir = 'N') {
-    const color = this.terrainColor[id], hexType = hex?.hexType, tname = this.terrainNames[id];
+    const color = this.terrainColor[id], hexType = hex?.hexType, tname = TitanMap.terrainNames[id] ?? 'Black';
     // console.log(stime(this, '.labelHexes'), { k: ring, id, color, hexType, hexid: hex?.Aname, hex });
     if (hex === undefined) debugger;
     if (id === 'K' && hexType !== 'B') debugger;
@@ -295,7 +318,7 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
         hex.rcText.y += TP.hexRad * (hexType === 'V' ? .5 : 0);
         hex.topDir = topDir;
         const textRot = { N: 0, S: 0, EN: 60, ES: -60, WN: -60, WS: 60 };
-        const hexid = new CenterText(`${123}`, F.fontSpec(16 * TP.hexRad / 60));
+        const hexid = hex.hexid = new CenterText(`${123}`, F.fontSpec(16 * TP.hexRad / 60));
         hexid.rotation = textRot[topDir];
         hex.edgePoint(topDir, 1.05, hexid);
         hex.cont.addChild(hexid);
@@ -303,23 +326,24 @@ export class TitanMap<T extends Hex> extends HexMap<T> {
         const ldir = H.dirRevNS[topDir];
         hex.edgePoint(ldir, .6, hex.distText);
         hex.distText.rotation = textRot[ldir];
-        hex.distText.font = F.fontSpec(18 * TP.hexRad / 60);
+        hex.distText.font = F.fontSpec((22) * TP.hexRad / 60);
       }
       hex.distText.text = tname;
       hex.distText.visible = true;
+      hex.addImage();
     }
   }
 
-  terrainNames = {
-    P: 'PLAINS', J: 'JUNGLE', B: 'BRUSH', M: 'MARSH', S: 'SWAMP', D: 'DESERT',
-    U: 'TUNDRA', T: 'TOWER', W: 'WOODS', H: 'HILLS', N: 'MOUNTAINS', K: 'BLACK',
+  static terrainNames: {[key in TerrId]?: string} = {
+    P: 'Plains', J: 'Jungle', B: 'Brush', M: 'Marsh', S: 'Swamp', D: 'Desert',
+    U: 'Tundra', T: 'Tower', W: 'Woods', H: 'Hills', N: 'Mountains',
   }
   terrainColorColossus = {
     P: 'yellow', J: 'darkgreen', B: 'lime', M: 'indianred', S: 'blue', D: '#FFA200',
     U: 'skyblue', T: 'lightgrey', W: 'olive', H: 'brown', N: 'red', K: 'BLACK', // redbrown, transparent
   }
   terrainColorOrig = {
-    P: 'gold', J: 'limegreen', B: '#BACD32', B1: 'yellowgreen', M: 'peru', S: 'skyblue', D: 'darkorange', //'#FFA200',
+    P: 'gold', J: 'limegreen', B: '#BACD32', M: 'peru', S: 'skyblue', D: 'darkorange', //'#FFA200',
     U: '#D0D0F0', T: '#E0E0D0', W: '#DDD88A', H: 'saddlebrown', N: '#FF343C', K: 'BLACK', // redbrown, transparent
   }
   terrainColor = this.terrainColorOrig;
