@@ -33,11 +33,15 @@ class TitanShape extends HexShape {
     const p2a = this.pt2(x2);
     const p2b = this.pt2(x1);
 
-    const y01 = this.y0(x0), y02 = this.y2(x2);
-    let y0 = Math.min(y01, y02);
-    const y1 = Math.max(y01, y02);
-    this.setBounds(-x1, y0, 2 * x1, y1 - y0);
-    return g.mt(...p0a).lt(...p0b).lt(...p1a).lt(...p1b).lt(...p2a).lt(...p2b).cp();
+    const y01 = this.y0(x0), y02 = this.y2(x2), edge = 1 * TP.hexRad / 59;
+    const y0 = Math.min(y01, y02) - edge;
+    const y1 = Math.max(y01, y02) + edge;
+    const x01 = x0 + edge;
+    this.setBounds(-x01, y0, 2 * x01, y1 - y0);
+    g.mt(...p0a).lt(...p0b).lt(...p1a).lt(...p1b).lt(...p2a).lt(...p2b).cp();
+    g.ss(TG.tl * 1.5).s(TG.hl);
+    g.mt(...p0a).lt(...p0b).lt(...p1a).lt(...p1b).lt(...p2a).lt(...p2b).cp();
+    return g;
   }
 
   /**
@@ -50,64 +54,56 @@ class TitanShape extends HexShape {
   }
   // TitanShape:
   tscgf(color: string, g0 = this.graphics) {
-    const rad = Math.floor(this.radius * 59 / 60);
+    const rad = Math.floor(this.radius);
     this.scaleX = rad; this.scaleY = rad;
     return this.hexk(g0.f(color));
   }
   // BlackShape:
   bscgf(color: string, g0 = this.graphics) {
-    const rad = Math.floor(this.radius * 59 / 60); // with hexk = .3 only ~43.5/60 show
+    const rad = Math.floor(this.radius); // with hexk = .3 only ~43.5/60 show
     this.scaleX = this.scaleY = 1;
     return g0.f(color).dp(0, 0, rad, 6, 0, this.tilt); // 30 or 0
   }
 }
-
+class TG {
+  static transp = 'rgba(0,0,0,0)'; // transparent
+  static hl = C.BLACK;
+  static cl = C.BLACK;
+  static tl = 0.02;
+  static ic = C.grey;
+}
 
 /** Graphics for exit arrows */
 class TitanGraphics extends Graphics {
-  static exitGraphics: TitanGraphics[];
-  static setExitGraphics() {
-    const dx = -.3 * GS.exitDir;
-    TitanGraphics.exitGraphics = [
-      new TitanGraphics(),
-      new TitanGraphics().block(dx),
-      new TitanGraphics().arch(dx),
-      new TitanGraphics().arrow(dx),
-      new TitanGraphics().arrow3(dx),
-    ];
-  }
-
-  constructor(public incolor = C.WHITE) { super();  }
+  constructor(public incolor = TG.ic) { super();  }
 
   exit(id: MoveId | 0, dx = -.3) {
-    return [this.zero, this.block, this.arch, this.arrow, this.arrow3][id].call(this, dx);
+    const f = [this.zero, this.block, this.arch, this.arrow, this.arrow3][id];
+    return f.call(this, undefined, undefined, TG.cl, TG.tl);
   }
 
-  zero(x = 0, incolor = this.incolor) { return this; }
+  zero(x = 0, incolor = this.incolor, cl = TG.cl, tl = TG.tl) { return this; }
 
-  arrow(x = 0, incolor = this.incolor) {
-    const dx0 = .1, y0 = -.0, y1 = y0 + .01, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9;
-    const rv = this
-      .f(C.WHITE).mt(x - dx0, y0 + dy0).lt(x, y0 - dy0).lt(x + dx0, y0 + dy0).cp()
-      .f(incolor).mt(x - dx1, y1 + dy0).lt(x, y1 - dy1).lt(x + dx1, y1 + dy0).cp();
-    return rv as TitanGraphics;
+  arrow(x = -.3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+    const dx0 = .08, y0 = .05, y1 = -.1;
+    this.ss(tl).s(cl).mt(x - dx0, y0).lt(x, y1).lt(x + dx0, y0).es();
+    this.f(incolor).mt(x - dx0, y0).lt(x, y1).lt(x + dx0, y0).cp();
+    return this as TitanGraphics;
   };
-  arch(x = -.3, incolor = this.incolor) {
-    const dx0 = .1, y0 = 0, y1 = y0 + .01, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI / 180, a1 = 360 * Math.PI / 180;
-    const rv = this
-      .f(C.WHITE).mt(x - dx0, y0 + dy0).lt(x - dx0, y0 - dy0).arc(x, y0, dx0, a0, a1, false).lt(x + dx0, y0 + dy0).cp()
-      .f(incolor).mt(x - dx1, y1 + dy0).lt(x - dx1, y1 - dy1).arc(x, y0, dx1, a0, a1, false).lt(x + dx1, y1 + dy0).cp();
-    return rv as TitanGraphics;
+  arch(x = -.3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+    const dx0 = .08, y0 = .05, y1 = -.1 + dx0, a0 = 180 * Math.PI / 180, a1 = 360 * Math.PI / 180;
+    this.ss(tl).s(cl).mt(x - dx0, y0).lt(x - dx0, y1).arc(x, y1, dx0, a0, a1, false).lt(x + dx0, y0).es();
+    this.f(incolor).mt(x - dx0, y0).lt(x - dx0, y1).arc(x, y1, dx0, a0, a1, false).lt(x + dx0, y0).cp();
+    return this as TitanGraphics;
   }
-  block(x = -.3, incolor = this.incolor) {
-    const dx0 = .1, y0 = 0, y1 = y0 + .002, dy0 = .1, dx1 = dx0 * .9, dy1 = dy0 * .9, a0 = 180 * Math.PI / 180, a1 = 360 * Math.PI / 180;
-    const rv = this
-      .f(C.WHITE).mt(x - dx0, y0 + dy0).lt(x - dx0, y0 - dy0).lt(x + dx0, y0 - dy0).lt(x + dx0, y0 + dy0).cp()
-      .f(incolor).mt(x - dx1, y1 + dy0).lt(x - dx1, y1 - dy1).lt(x + dx1, y1 - dy1).lt(x + dx1, y1 + dy0).cp();
-    return rv as TitanGraphics;
+  block(x = -.3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+    const dx0 = .08, y0 = .05, y1 = -.1;
+    this.ss(tl).s(cl).mt(x - dx0, y0).lt(x - dx0, y1).lt(x + dx0, y1).lt(x + dx0, y0).es();
+    this.f(incolor).mt(x - dx0, y0).lt(x - dx0, y1).lt(x + dx0, y1).lt(x + dx0, y0).cp();
+    return this as TitanGraphics;
   }
-  arrow3(dx = .3, incolor = this.incolor) {
-    return this.arrow(-dx, incolor).arrow(0, incolor).arrow(dx, incolor);
+  arrow3(dx = .3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+    return this.arrow(-dx, incolor, cl, tl).arrow(0, incolor, cl, tl).arrow(dx, incolor, cl, tl);
   }
 }
 
@@ -203,7 +199,6 @@ export class TitanHex extends Hex2 {
 export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
   constructor(radius = TP.hexRad, addToMapCont: boolean, hexC: Constructor<Hex>) {
     super(radius, addToMapCont, hexC);
-    TitanGraphics.setExitGraphics();
     console.log(stime(this, `.constructor: TitanMap constructor:`), hexC.name)
   }
 
