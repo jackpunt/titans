@@ -72,6 +72,7 @@ class TG {
   static tl = 0.02;
   static ic = C.grey;
   static x0 = -.3;
+  static image = false;
 }
 
 /** Graphics for exit arrows */
@@ -183,7 +184,7 @@ export class TitanHex extends Hex2 {
   addImage() {
     const name = this.distText.text;         // 'Brush' or whatever;
     const img_name = (this.distText.y > this.hexid.y) ? `${name}_i` : `${name}`;
-    const bm = AliasLoader.loader.getBitmap(img_name, 2 * TP.hexRad, true); // offset and scaled.
+    const bm = AliasLoader.loader.getBitmap(img_name, 1.93 * TP.hexRad); // offset and scaled.
     if (bm.image) {
       bm.name = name;
       bm.rotation = this.distText.rotation;
@@ -311,7 +312,8 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
         hex.rcText.y += TP.hexRad * (hexType === 'V' ? .5 : 0);
         hex.topDir = topDir;
         const textRot = { N: 0, S: 0, EN: 60, ES: -60, WN: -60, WS: 60 };
-        const hexid = hex.hexid = new CenterText(`${123}`, F.fontSpec(16 * TP.hexRad / 60));
+        const hid = this.getHexid(hex);
+        const hexid = hex.hexid = new CenterText(`${hid}`, F.fontSpec(16 * TP.hexRad / 60));
         hexid.rotation = textRot[topDir];
         hex.edgePoint(topDir, 1.05, hexid);
         hex.cont.addChild(hexid);
@@ -323,7 +325,7 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
       }
       hex.distText.text = tname;
       hex.distText.visible = true;
-      hex.addImage();
+      if (TG.image) hex.addImage();
     }
   }
 
@@ -371,6 +373,31 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
     ['M', 'D', 'P', 'B', 'M', 'J', 'B', ], // n,wn
     ['P', 'S', 'M', 'B', 'P', 'D', 'B', ], // en,n
   ];
+  canonical: {[key: number]: [number, number]} = {
+    1: [8, 7], 2: [9, 8], 3: [10, 8], 4: [10, 9], 5: [10, 10], 6: [9, 10], 7: [8, 9],
+    8: [7, 9], 9: [7, 10], 10: [7, 11], 11: [7, 12], 12: [6, 12], 13: [5, 11], 14: [6, 10],
+    15: [5, 9], 16: [4, 9], 17: [4, 10], 18: [3, 10], 19: [2, 9], 20: [3, 8], 21: [4, 8],
+    22: [4, 7], 23: [4, 6], 24: [3, 6], 25: [2, 5], 26: [3, 4], 27: [4, 4], 28: [4, 5],
+    29: [5, 5], 30: [6,4], 31:[5, 3], 32:[6, 2], 33: [7, 2], 34: [7, 3], 35: [7, 4], 36: [7, 5], 37: [8, 5],
+    38: [9, 4], 39: [10, 4], 40: [10, 5], 41: [10, 6], 42: [9, 6], // [8,7] !
+    100: [10, 7], 200: [8, 11], 300: [4, 11], 400: [2, 7], 500: [4, 3], 600: [8, 3],
+    101: [11, 7], 102: [12, 8], 103: [11, 9], 104: [12, 10],
+    105: [11, 11], 106: [10, 11], 107: [10, 12], 108: [9, 12], 109: [8, 13], 110: [7, 13], 111: [7, 14],
+    112: [6, 14], 113: [5, 13], 114: [4, 13], 115: [4, 12], 116: [3, 12], 117: [2, 11], 118: [1, 11],
+    119: [1, 10], 120: [1, 9], 121: [1, 8], 122: [1, 7], 123: [1, 6], 124: [1, 5], 125: [1, 4],
+    126: [1, 3], 127: [2, 3], 128: [3, 2], 129: [4, 2], 130: [4, 1], 131: [5, 1], 132: [6, 0],
+    133: [7, 0], 134: [7, 1], 135: [8, 1], 136: [9, 2], 137: [10, 2], 138: [10, 3], 139: [11, 3],
+    140: [12, 2], 141: [11, 5], 142: [12, 6],
+    1000: [7,7], 2000:[7,8], 3000:[6,8], 4000:[5,7], 5000:[6,6], 6000:[7,6],
+  }
+  getHexid(hex: TitanHex) {
+    const { row, col } = hex, canon = this.canonical;
+    for (let key in canon) {
+      const [r, c] = canon[key];
+      if (r === row && c === col) return key
+    }
+    return -1;
+  }
 
   /** set hexShape.hexType; paint(), hex.cont.setBounds(hexShape.getBounds()) */
   paintAndCache(hex: TitanHex) {
