@@ -28,7 +28,6 @@ export class GameSetup extends GameSetupLib {
   }
 
   override loadImagesThenStartup(qParams: Params = []) {
-
     const loader = AliasLoader.loader ?? (AliasLoader.loader = new AliasLoader());
     loader.imageArgs.ext = 'gif';
     const names = Object.values(TitanMap.terrainNames);
@@ -38,8 +37,6 @@ export class GameSetup extends GameSetupLib {
   }
 
   override startup(qParams?: { [key: string]: any; } | undefined): void {
-    const loader = AliasLoader.loader
-    const brush = loader.getImage('Brush');
     this.hexMap = new TitanMap<Hex & TitanHex>(TP.hexRad, true, TitanHex as Constructor<Hex>)
     this.nPlayers = Math.min(TP.maxPlayers, qParams?.['n'] ? Number.parseInt(qParams?.['n']) : 2);
     this.startScenario({turn: 0, Aname: 'defaultScenario'});

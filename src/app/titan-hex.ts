@@ -71,6 +71,7 @@ class TG {
   static cl = C.BLACK;
   static tl = 0.02;
   static ic = C.grey;
+  static x0 = -.3;
 }
 
 /** Graphics for exit arrows */
@@ -84,25 +85,25 @@ class TitanGraphics extends Graphics {
 
   zero(x = 0, incolor = this.incolor, cl = TG.cl, tl = TG.tl) { return this; }
 
-  arrow(x = -.3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+  arrow(x = TG.x0, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
     const dx0 = .08, y0 = .05, y1 = -.1;
     this.ss(tl).s(cl).mt(x - dx0, y0).lt(x, y1).lt(x + dx0, y0).es();
     this.f(incolor).mt(x - dx0, y0).lt(x, y1).lt(x + dx0, y0).cp();
     return this as TitanGraphics;
   };
-  arch(x = -.3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+  arch(x = TG.x0, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
     const dx0 = .08, y0 = .05, y1 = -.1 + dx0, a0 = 180 * Math.PI / 180, a1 = 360 * Math.PI / 180;
     this.ss(tl).s(cl).mt(x - dx0, y0).lt(x - dx0, y1).arc(x, y1, dx0, a0, a1, false).lt(x + dx0, y0).es();
     this.f(incolor).mt(x - dx0, y0).lt(x - dx0, y1).arc(x, y1, dx0, a0, a1, false).lt(x + dx0, y0).cp();
     return this as TitanGraphics;
   }
-  block(x = -.3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+  block(x = TG.x0, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
     const dx0 = .08, y0 = .05, y1 = -.1;
     this.ss(tl).s(cl).mt(x - dx0, y0).lt(x - dx0, y1).lt(x + dx0, y1).lt(x + dx0, y0).es();
     this.f(incolor).mt(x - dx0, y0).lt(x - dx0, y1).lt(x + dx0, y1).lt(x + dx0, y0).cp();
     return this as TitanGraphics;
   }
-  arrow3(dx = .3, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
+  arrow3(dx = -TG.x0, incolor = this.incolor, cl = TG.cl, tl = TG.tl) {
     return this.arrow(-dx, incolor, cl, tl).arrow(0, incolor, cl, tl).arrow(dx, incolor, cl, tl);
   }
 }
@@ -182,12 +183,9 @@ export class TitanHex extends Hex2 {
   addImage() {
     const name = this.distText.text;         // 'Brush' or whatever;
     const img_name = (this.distText.y > this.hexid.y) ? `${name}_i` : `${name}`;
-    const bm = AliasLoader.loader.getBitmap(img_name, 2 * TP.hexRad); // offset and scaled.
+    const bm = AliasLoader.loader.getBitmap(img_name, 2 * TP.hexRad, true); // offset and scaled.
     if (bm.image) {
       bm.name = name;
-      bm.regX = - bm.x / bm.scaleX;
-      bm.regY = - bm.y / bm.scaleY;
-      bm.x = bm.y = 0;
       bm.rotation = this.distText.rotation;
       this.distText.visible = false;
     }
