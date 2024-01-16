@@ -1,0 +1,1296 @@
+Titan Errata and Clarifications
+Last updated on October 6, 2013. (http://wolff.to/titan/errata.shtml)
+For more information on Titan my the Titan Home Page. (http://wolff.to/titan/)
+
+The most recent changes:
+I added a clarification about what happens when more than seven characters are found in a legion. And further clarified that if all players agree the extra character can be returned to the caretaker stacks alive.
+I added some comments about point scoring that are moot as far as the game is concerned, but might be relevant for tie breaking or bragging. January 15, 2008
+I added a note about which hex is connected to a wall. March 6, 2001
+I corrected a typo in the number before Angel summonning clarification. May 2, 2000
+I reworded part of the clarification for legions that move and end up in the same location. May 2, 2000
+I added a clarification about movement order for defensive reinforcements. April 13, 2000
+I added a clarification about when an Angel summoning decision is made. April 13, 2000
+I added a specific note about needing to always roll strikes, even when a character is almost certainly going to be killed. April 13, 2000
+I modified the introduction to account for the buyout of AH and the end of Avaloncon under that name.
+I added a clarification of how bramble effects rangestriking.
+I added etiquette guidelines for what to do if an engagement is left unresolved.
+I aded a clarification about how to handle musters after a titan is eliminated.
+I added a clarification to rule on mustering by the defender. Even if the defender declines to muster during phase 4 when he legally could muster, this does not prevent him from mustering later if he goes on to win the battle and the characters needed to allow the reinforcement survive.
+I corrected a typo that referred to 2000 and 6000 as mountains instead of tundra.
+I changed what order characters with the same point value are removed from overstacked legions (note that there should never be any overstacked legions to remove stuff from).
+I clarified that total legion markers available to each player are public.
+I clarified that losses in an engagement are public and that this includes which units were lost by which legion, not just aggregate losses.
+A slight rewording of what proposals can be accepted. No change in intent was involved in this change.
+A clarification was added for moderated games involving certified information. In order to be consistant with face to face play, information should not (even about their own stuff!) be provided to players that can be passed on to other players while still remaining certified by the moderator.
+I added a comment to the etiquette section indicating, that for play by email games the moderator ought to keep track of what happens and provide players reviews of what happened (that they saw) upon request.
+Making die rolls in advance is prohibited.
+Titan Errata and Clarifications (October, 2011)
+
+By Bruno Wolff III (bruno@wolff.to) with help from many others.
+
+Introduction
+
+First I would like to explain how official this document is. I am not employed
+by The Avalon Hill Game Company. I ran the multiplayer Titan event at
+Avaloncon in 1994, 1995, 1996, 1997 and 1998. As such I was asked to volunteer
+to answer rules questions about Titan for The Avalon Hill Game Company. I did
+volunteer to do this. However now that Avalon Hill has been bought by Hasbro
+I don't think they will be forwarding me any rules questions.
+
+The Errata and Clarifications section is heavily based on a list of questions
+and answers developed by Bill Scott (he was the answer person for Titan before
+me). The Etiquette section is heavily based on a document done by Brian
+Sutton. I received significant help in creating this document from a number of
+people. Don Woods and David desJardins were particularly helpful.
+
+The purpose of this document is to correct and clarify rules that were written
+contrary to what the designers intended, cover things left out of the rules,
+and fix things that were broken. I hope that this document will promote
+standardized play of Titan.
+
+As part of the standardization process, I tried to specify the rules so that
+it is possible to write standardized play by electronic mail moderators.
+Because in PBEM games timing issues become a lot more relevant, a number of
+the new rules cover things that will have little effect in face to face
+games.
+
+In developing this document I tried to strike a balance between fixing rules
+that did not convey the proper intent and staying close to the literal
+meaning of the published rules.
+
+Included in this document are five parts. They are:
+  Introduction
+  Errata and Clarifications
+  Simplified Sequence of play
+  Complete Sequence of Play
+  Etiquette Guide
+
+Errata and Clarifications
+
+Below, the numbers at the start of each rules note refers to the sections
+in the published Titan rules to which it applies.
+
+1.0: The purpose of this errata set is to standardize Titan play, both for
+face to face games and play by (electronic) mail. The rules for play by mail
+are the same as for face to face games. However, because there are significant
+delays in information transfer in play by mail games, some timing issues
+needed to be covered that rarely would come up in face to face games.
+
+1.3, 1.4: There is now a more precise sequence of play. All allowed actions
+(other than some communication) are synchronous and only one player is allowed
+to act at any point while playing. Players may informally act out of turn
+(typically conceding) in order to speed play, in some situations.
+Communication with other players is asynchronous and is not guaranteed to
+occur at specific points in the sequence of play, nor is it guaranteed that
+the intended recipients will receive (pay attention to) attempted
+communications. Note that die rolls should not be made in advance to speed
+play.
+
+2.2: The following is the standard for identifying hexes on battlelands.
+Orient the battleland so that the terrain name is in the upper right, the turn
+number track is on the bottom and the battlelands logo is in the upper left.
+There are six vertical columns of hexes. The columns are labeled from left
+to right "A", "B", "C", "D", "E" and "F". The hex at the bottom of each
+column is labeled by its column letter followed by "1". Hexes above another
+hex in a column are labeled with the column letter followed by a digit one
+greater than the digit used in the hex below it. For example the volcano hex
+in the mountains is labeled "D4", the tree hexes in the jungle are labeled
+"B4", "D3", and "F3".
+
+2.2, 10.1: The attacker's entry sides for battles are now named as well. They
+are called 'left', 'right' and 'bottom' based on where the entry side is
+relative to the land number (which is at the top). For example entering
+mountains 1000 from tundra 6000 is a left side attack, from tundra 2000
+is a right side attack and from plains 1 is a bottom attack. For left side
+attacks the attacker enters on A3, B4, C5 or D6 and the defender enters on
+D1, E1 or F1. For right side attacks the attacker enters on F1, F2, F3 or F4
+and the defender enters on A1, A2 or A3. For bottom attacks the attacker
+enters on A1, B1, C1 or D1 and the defender enters on F4, E5 or D6.
+
+2.2, 10.1, 10.2: For tower attacks, the attacker always enters on A1, B1, C1
+or D1 and the defender deploys on C3, C4, D3, D4, D5, E3 or E4.
+
+2.3: All characters of the same type (except titans) are considered to be
+identical in spite of any color or artwork differences between counters. In
+face to face games players do not have to permit detailed study of characters'
+counters. They do need to let players identify the type of characters being
+shown when required (to show the characters) by the rules.
+
+3.5: Character counts:
+Angels      18
+Archangels   6
+Behemoths   18
+Centaurs    25
+Colossi     10
+Cyclops     28
+Dragons     18
+Gargoyles   21
+Giants      18
+Gorgons     25
+Griffons    18
+Guardians    6
+Hydras      10
+Lions       28
+Minotaurs   21
+Ogres       25
+Rangers     28
+Serpents    10
+Titans      1 per player
+Trolls      28
+Unicorns    12
+Warbears    21
+Warlocks     6
+Wyverns     18
+
+4.1: If a player is forced to remove characters from a legion that is found
+to contain more characters than allowed (seven after each player's first
+turn), they should be removed in the following order: creatures, guardians,
+warlocks, archangels, angels. Creatures should be removed starting with those
+worth the most points. If there are several worth the same amount of points,
+remove creatures that rangestrike first. If there is still a tie remove
+creatures that fly first. If there is still a tie remove creatures with
+the largest skill factor first. If there is still a tie the legion's owner
+decides which of the tied creatures to remove first.
+
+4.1: Characters removed from a legion with more than seven characters are
+treated as slain. Creatures are placed in the dead pile and lords and
+demi-lords are returned to the caretaker stacks. If the error is discovered
+during an engagement, the removed creatures should be considered as being
+removed before the engagement. They don't result in any points being awarded
+nor do they affect the triggering of angel summoning. And demi-lords are
+available as defender reinforcments and lords are available to be earned
+for points awarded in the engagement. If there error is discovered shortly
+after it happens (specifically before it affects recruiting) and all players
+agree what the last character recruited was, the character may be returned
+to the character stacks and be available for recruiting.
+
+4.1, 5.2: Initial splits are made on each player's first turn. Players are
+allowed to have a legion with their initial eight characters until the
+commencement phase of their first turn.
+
+4.3: If you have two or more split offs, whose normal movement is completely
+blocked, still on the same land, you are not forced to use teleportation (when
+possible) to move any of the split offs.
+
+4.5: Players may attempt to expose some or all of the contents of one of their
+own legions at any time. They may attempt to show this legion to all players
+or any subset of them. They are not guaranteed that the exposure will be
+synchronized with any other events in the game. Nor are they guaranteed that
+the players they are trying to expose the legions to will look at them. Note
+that for moderated games, the players should NEVER be given digitally signed
+(by the moderator) contents of legions (even their own legions) or relayed
+messages. Instead (where real security is desired) they should be sent a
+signed nonreusable token in the same encrypted (using the recipient's public
+key) part as the legion contents.
+
+4.5, 20.0: Players may use any strategy or memory aids they wish. However
+in face to face games it is recommended that players allow no physical aids
+(except for recording each player's points) and no coaching from people not
+still in the game.
+
+4.6: A player who eliminates another player gets all of the other player's
+legion markers, even ones that player got from eliminating other players.
+
+4.6: Which legion markers (and their total number) are available to each
+player is public information.
+
+4.7: If at the end of the movement phase a planned split is being canceled
+the original legion marker must be used for the recombined split. In the
+case of a three way split where the split off with the original legion marker
+(only) has moved off, either legion marker may be used when recombining the
+other two split offs.
+
+5.0: Each player starts with a point total of zero.
+
+5.0: A player may withdraw from the game instead of choosing which color
+legion markers to use.
+
+5.0, 20.1: After rolling to determine starting towers, players choose their
+color in ascending starting tower order, with the player with the lowest
+starting tower number choosing first.
+
+5.1: If a player is unable or unwilling to make a starting tower roll, the
+tournament director (or a consensus of the other players if there is no
+tournament director) will designate someone else to make the roll for him.
+A player may not withdraw from the game while rolling for towers.
+
+5.1: Players move in order of descending starting tower numbers, with the
+player with the highest starting tower number going first. Players may want
+to change seating so that they will be sitting clockwise around the table in
+the same order as they will be taking turns.
+
+5.2: Initial splits are verifiable. If players want to enforce this (it is
+usually obvious if someone made an illegal initial split), the procedure
+is the following. The splitting player shows that he is only holding his
+initial lords and initial legion markers. Then he secretly splits them.
+He then takes his remaining characters (his initial creatures), splits
+them into two groups of three each and places them into his previous splits.
+
+6.2: If you have no legal move for any of your legions (without using
+teleportation) then you do not have to move any legions. Positions where a
+player has no legal move will not happen in games without massive collusion
+between the players.
+
+6.2, 18.0: There are situations where a legion may move and end up in its
+initial location. For instance a legion in swamp 42 could move back to swamp
+42 (assuming any other split offs had already moved away) on a roll of a 6.
+This counts as a moved legion, both for purposes having moved at least one
+legion and for allowing the legion to muster.
+
+7.0, 11.0: When players are making adjustments in their moves they must undo
+all moves that occurred after the move they are adjusting (both on the
+masterboard and on battlelands). Once they have begun the next phase the
+preceding moves may not be adjusted. (E.g. once you roll any dice or look at
+another player's legion to start an engagement any preceding moves are fixed.)
+
+7.0, 8.2, 10.1, 10.4: If a player does not declare which side he is entering
+a land in during the movement phase then a random roll (with a uniform
+distribution) is used to decide which side he is entering from among the
+sides he could have legally entered. This should be done as soon as the
+oversight is realized. This applies to both where alternate normal movement
+routes were legal and where titan teleport was used.
+
+7.1, 8.2: Titan teleportation does not override rule 7.1. You may not titan
+teleport on to a land where another of your legions is engaged with an
+opponent's legion.
+
+7.6: You may not change your split after using a mulligan on your first turn.
+
+7.6, 20.0: The recommended way to give a handicap is to give the weaker
+players a fixed number of mulligans that can be used for any of their
+masterboard rolls. They replace their first turn mulligan option (i.e. using
+a mulligan on their first turn counts as using one of their mulligans). Only
+one mulligan may be used on a single turn. The player may not change his
+splits after making their initial roll for the turn. The number of mulligans
+each player has remaining is public.
+
+8.0: You are never forced to teleport.
+
+8.0, 15.0: The same lord may teleport in the movement phase and be summoned
+during the engagement phase.
+
+8.1: Tower teleportation must be to a different land than the one the
+teleporting legion started in. You may not loop as is sometimes possible with
+normal movement.
+
+9.1: The player whose turn it is decides which engagement to fight next at
+the start of his engagement phase and after each engagement is resolved. He
+does not have to decide the complete order in which engagements will be
+resolved at the start of the engagement phase.
+
+9.1, 9.4, 11.1: Either player may decide to fight the battle out and then
+concede before their opponent has a chance to enter the battleland. The effect
+of conceding after starting the battle is that their opponent's legion is
+revealed to all players. Note that if the defender flees, an agreement is
+reached or a concession is made without fighting, then the victorious legion
+is not revealed (to all of the players).
+
+9.2: The defender in a battle may flee, if eligible to, before the attacker
+gets a chance to concede.
+
+9.3: Agreements prior to fighting out a battle may only specify specific
+characters to be lost by the legions involved in the engagement. These losses
+may not be conditional on any events (such as die rolls). At least one side
+must be totally eliminated. If the agreement includes the loss of a player's
+titan, all other characters in that legion must also be lost as part of the
+agreement. Agreements are binding. Note that promises made along with the
+agreement are not binding (and are not technically part of the agreement).
+Promises to propose or accept agreements (possibly based on a die roll) are
+also not binding.
+
+9.3: The only binding deal is a prebattle agreement during an engagement. For
+example, once a battle is started players may not agree to losses in that
+battle (though one side may concede unilaterally).
+
+9.3: Negotiations to resolve a battle (including proposals of losses) are
+conducted in secret (between the two involved players). Any communications in
+the negotiation phase that are overheard by other players do not guarantee
+stack contents and may not be enforced as binding proposals by other
+than the negotiating players.
+
+9.3: During negotiations each player alternates taking an action starting with
+the defender after he declines the option to flee. Each player can make a set
+of proposals (e.g. you win, but lose any two creatures), concede, accept a
+proposal previously made by the other player (at any step in this negotiation)
+or declare he will make no more proposals. A set of proposals cannot include
+any proposals previously made by the other player and must include at least
+one new proposal that has not been previously made by the proposer
+(in this negotiation).
+
+9.3: Once a proposal has been made it cannot be withdrawn.
+
+9.3: Once a player states he has no more proposals to make, the other
+player may accept a proposal made by his opponent (if any), concede or fight.
+
+9.3: Once a player states he is going to fight, both involved stacks become
+public until the engagement is resolved.
+
+9.4: Concessions are allowed only at specific points in the sequence of play.
+In some cases the phasing player is allowed to ATTEMPT to concede (as opposed
+to being able to concede), giving the nonphasing player a chance to concede
+instead. While generally the effect is still the same as conceding at any
+time, in some unusual situations it is now well defined who has the right to
+concede first. In most cases players may informally concede in advance of the
+proper time to do so, making their opponent's strikes in the battle academic.
+However you may not concede in advance when your opponent has the option to
+summon or muster before you can legally concede (as this would become a
+binding promise of future actions that could affect the other player's
+decisions).
+
+9.4: If the defender enters the battleland and then concedes the attacking
+legion must be publicly revealed.
+
+9.4, 9.5: If a player concedes after his opponent's titan has already been
+slain or after all of his opponent's characters in the battle have been slain,
+the result is mutual elimination.
+
+9.4, 10.0: When a battle is being fought out the attacker has a chance to
+concede before the defender takes his first battle turn. If the attacker
+declines this option, then the defender gets a chance to concede before
+starting his maneuver phase.
+
+9.4, 10.0: In place of maneuvering, striking, rangestriking, counterstriking
+or declaring he is finished, the phasing player may attempt to concede. His
+opponent may either accept the concession or concede himself instead. Note
+that only one player can actually concede.
+
+9.4, 10.0: Just before becoming the phasing player or if the battle is ending,
+the nonphasing player may unconditionally concede.
+
+9.4, 10.1: If the defender enters a battleland and then concedes (before the
+attacker's turn to enter) the attacker does not get to lose characters from
+his legion.
+
+9.4, 10.5: A concession takes precedence over a time loss. If a player
+concedes just as the battle would end due to time loss, there is no time loss.
+
+9.4, 11.7: The nonphasing player may also concede just before drift damage
+is applied (at the start of a strike phase) if drift damage will slay any of
+the phasing player's characters.
+
+9.4, 20.4: Conceding an engagement is now distinguished from conceding the
+game.  Conceding an engagement is still referred to as concession, while
+conceding from the game as referred to as withdrawing from the game.
+
+9.5: The losses in an engagement by each involved legion are public, even if
+the engagement was resolved by agreement. You get to know which legion lost
+which units, not just the aggregate losses.
+
+10.1: Note that you may voluntarily leave characters off a battleland when
+entering on your first turn. Characters left off are slain, but do not
+trigger (nor prevent) angel summoning. (The first defender character that
+enters the battleland and then is slain triggers angel summoning.) Points
+awarded for characters left off the battleland are the same as if they had
+entered and were slain.
+
+10.1: A player may refuse to enter his titan (which will eliminate him from
+the game) on his first battle turn. If a player does this, strikes,
+rangestrikes and counterstrikes are still resolved. The battle ends at the
+end of the strike phase (unless someone concedes sooner).
+
+10.1: Not entering any characters onto a battleland is not the same as
+concession. The battle continues until the end of the following strike
+phase (though there won't be any strikes). This allows the opponent a
+chance to concede, turning the battle into a mutual elimination.
+
+10.1, 14.0, 15.0: You may not leave a defensive reinforcement or summoned
+angel or archangel off the battleland. If they don't enter then the muster or
+summons did not occur.
+
+10.1, 10.2: When deploying in a tower, the defender may still leave characters
+off of the battleland on his first maneuver phase.
+
+10.4: When titan teleporting you may enter a land from a side which cannot be
+entered by normal movement on the masterboard. For example you may enter
+jungle 135 from the A1, B1, C1, D1 edge.
+
+10.4: If you titan teleport into a tower you will still enter the battleland
+from the required edge (A1, B1, C1, D1) no matter which side you enter the
+tower land on the masterboard.
+
+10.5: If a time loss occurs, the victor does not get any points for characters
+slain while the battle was being fought out.
+
+10.5, 19.3, 19.4: If a titan is eliminated via a time loss, the victor does
+not get any points for characters in the titan's legion (whether slain or not
+before the time loss ended the battle), but half points and legion markers are
+still awarded normally with the victor getting the markers and half points for
+unengaged legions (engaged legions' half points go to the player they are
+engaged with).
+
+11.0: Though characters move sequentially in a player's maneuver phase, the
+phase is treated as atomic. Until you state you are done or roll a strike or
+rangestrike, you may reset the battleland and redo your movement.
+
+11.1: If a player attempts to concede instead of moving during his first
+maneuver phase of a battle, and his opponent preempts the concession with
+one of his own, the victorious legion does not lose any characters. Note that
+the defender can concede unconditionally just before his first maneuver phase
+if he so wishes.
+
+11.7: Bog, bramble, drift, and sand hexes are the same height as plain hexes
+in marsh and swamp, brush and jungle, tundra, and desert, respectively. Note
+that dunes do not indicate a higher elevation for purposes of rangestriking
+over another character (although they do affect line of sight). The volcano
+is the same height as the highest level of plain hexes in mountains. Tree
+hexes are at an elevation higher than any other hexes in hills, jungle, swamp
+and woods.
+
+11.7: The hex connected to a dune is the hex atop the dune. The hex at the
+bottom of a dune is not connected to the dune (for purposes of dune effects
+on rangestriking).
+
+11.7: The hex connected to a wall is the hex atop the wall. The hex at the
+bottom of a wall is not connected to the wall (for purposes of wall effects
+on rangestriking).
+
+11.7: Characters that either are flyers or are native to sand are not slowed
+when landing in sand. For example both lions and rangers can move into
+sand at a cost of one movement point.
+
+11.7: Natives to dunes may not carry over damage up dune hexsides when
+their strike is not up a dune hexside (even though they do not roll less
+dice striking up dunes).
+
+11.7: Neither natives nor non-natives to dunes may roll one less die, when
+their strike is not up a dune hexside, in order to allow carry over up a dune
+hexside.
+
+11.7: When striking up a dune hexside it is permissible to carry over up
+dune hexsides and not up dune hexsides in any order.
+
+11.7: There is a typo in the hazards chart where it refers to the affects
+of dunes on rangestriking. The word "of" should be "or".
+
+11.7: The defensive benefits for bramble modify skill level, not the strike
+number of the attack. Thus natives defending in bramble versus a non-native
+striker have their skill factor increased by one instead of increasing the
+strike number of the strike.
+
+11.7, 12.0, 12.2, 12.4: A character must strike with maximum effectiveness
+against its target (using the largest allowed number of dice and the smallest
+allowed strike number), unless taking penalties (forsaking allowed benefits
+is the same as taking a penalty) allows possible carry over to another
+character that otherwise wouldn't be allowed. (If rolling all sixes with
+the penalized number of dice won't do at least one excess point of damage,
+then carry over isn't possible.) You may not take any extra penalties not
+needed to allow for carry over. If you can eliminate one of the declared
+penalties and still carry over to the same set of characters, you have
+illegally taken an excess penalty. When taking different penalties to
+allow carry over to several possible targets, you still only need to possibly
+get one excess hit on the original target (after applying the penalties). You
+don't have to be able to possibly carry over damage to more than one carry
+over target.
+
+11.7, 13.2: The maximum range of a character's rangestrike does not change
+when intervening terrain modifies the character's effective skill factor.
+For example a ranger in hex B3 in the brush may rangestrike a character
+in hex E5 (barring other limitations).
+
+11.7, 13.5: Dragons in volcanos do not get a defensive benefit against
+rangestrikes from warlocks. Exception 13.5 applies here even though it was
+left out of the rangestrike comments for volcanos in 11.7. They do get the
+benefit against rangestrikes from other dragons.
+
+11.7, 13.5: Note that a warlock may potentially rangestrike from (to) the base
+of a cliff to (from) the top of the same cliff since it is not in contact
+with the other character and exception 13.5 prevents the warlock's
+rangestrike from being blocked.
+
+12.0: Once a character has been slain, it may not be the target of any more
+strikes or rangestrikes.
+
+12.0, 12.2, 12.3, 12.4, 12.5: The following are some examples to help clarify
+striking and carry over.
+
+Example 1 is in the plains. Blue has a cyclops at D4. Red has an undamaged
+troll at D3, an undamaged ogre at D5 and an undamaged ranger at E4. Blue has
+the following strike options for his cyclops: strike at the ogre needing 4s or
+higher to hit (and only being able to carry over damage to the troll), strike
+at the ogre needing 6s to hit (allowing possible carry over to the troll or
+ranger), strike at the troll needing 4s or higher to hit (and only being able
+to carry over to the ogre), strike at the troll needing 6s to hit (allowing
+possible carry over to the ogre or ranger), or strike at the ranger needing 6s
+to hit (allowing possible carry over to the ogre or troll). Note that he
+cannot strike at the ogre or troll needing 5s or better to hit. If blue
+decides to strike the ogre needing 6s to hit and rolls nine 6s, then he has
+the following options. Just kill the ogre, kill the ogre and do 3 damage to
+the troll, or kill the ogre and do 3 damage to the ranger. Note that the
+allocation of carry over damage is decided after you roll for damage. If
+instead he had decided to strike at the ogre needing 4s or higher, the ogre
+would be killed, and blue could choose to carry over 3 points of damage
+only to the troll (even though the 6s would have hit the ranger).
+
+Example 2 is in the desert. Blue has an ogre at F3. Red has an undamaged lion
+at F4 and an undamaged griffon at E4. Blue has the following options for
+striking with his ogre. He may strike at the lion, rolling 6 dice needing 5s
+or higher to hit (and not be able to carry over to the griffon) or roll 5 dice
+needing 6s to hit at the griffon. Note that he may not roll against the
+lion needing 6s to hit or only rolling 5 dice, since carry over is not
+permitted up a dune hexside if the initial strike is across a non-dune
+hexside.
+
+Example 3 is in the desert. Blue has a hydra at D5. Red has undamaged
+centaurs at C5 and D6 and an undamaged colossus at C4. Blue has the following
+strike options for his hydra. Strike at the colossus, rolling 12 dice needing
+5s or higher to hit (no carry over is allowed). Strike at either centaur
+rolling 10 dice needing 5s or higher to hit (with carry over possible to the
+other centaur and the colossus). Note that he may not refuse his 2 die bonus
+for striking down a dune when the colossus is the target since it is not
+possible to carry over damage to another character against which the dune
+bonus does not apply. (If the colossus had been damaged, then the hydra could
+refuse the bonus since carry over would be possible.) If blue strikes a
+centaur and rolls 1, 2, 5, 5, 5, 5, 6, 6, 6, 6 (8 hits) then he has the
+following legal damage allocations. Kill the targeted centaur and do no other
+damage. Kill both centaurs and not damage the colossus. Kill the targeted
+centaur and do 5 points of damage to the colossus. Kill both centaurs and do
+2 points of damage to the colossus. Note that he cannot carry over damage to
+both the other centaur and the colossus without killing one of them.
+
+Example 4 is in the desert. Blue has a hydra at C4. Red has undamaged
+centaurs at C5, D4 and D5. The strikes at D4 and D5 are up dunes; the strike
+at C4 is not. No matter which centaur is the target of the hydra's strike,
+it must roll 10 dice, needing 5s to hit. If the hydra strikes the centaur
+at C4, no carry over to the other centaurs is allowed even though the hydra
+is a native to dunes. If the hydra strikes at the centaur at D4, then carry
+over to both other centaurs is allowed in either order. So that if the
+hydra rolled 1, 2, 5, 5, 5, 5, 6, 6, 6, 6 (8 hits) against the centaur
+at D4 then Blue has the following legal damage allocations. Kill the
+targeted centaur (at D4) and do no other damage. Kill the targeted centaur
+(at D4) and kill the one not up a dune hexside (at C5) and not damage the
+other centaur (at D5). Kill the targeted centaur (at D4) and the other
+centaur up a dune hexside (at D5) and not damage the other centaur (at C5).
+Kill the targeted centaur (at D4) and the centaur not up a dune hexside
+(at C5) and do 2 points of damage to the centaur up a dune hexside (at D5).
+Kill the targeted centaur (at D4) and the centaur up a dune hexside (at D5)
+and do 2 points of damage to the centaur not up a dune hexside (at C5).
+
+Example 5 is in the tower. Blue has a hydra at C3. Red has an undamaged
+centaur at B2 and an undamaged ogre at D4. Blue has the following strike
+options for his hydra. Strike at the centaur needing 4s or higher to hit
+(with carry to the ogre allowed). Strike at the ogre needing 4s or higher to
+hit (with carry to the centaur allowed). Note that the fact that the hydra
+gets a benefit only against the centaur does not prevent carry over to the
+ogre since he needs the same strike number against either target (and the
+number of dice rolled is the same).
+
+Example 6 is in the brush. Blue has a hydra at D4. Red has an undamaged
+centaur at B3 and an undamaged gargoyle at B4. Blue has the following
+rangestrike options for his hydra. Do not take a rangestrike. Rangestrike
+the gargoyle needing 5s or better to hit. Rangestrike the centaur needing
+5s or better to hit. Rangestrike the centaur needing 6s to hit. No matter
+how many hits the hydra gets, no carry over is possible with rangestrikes.
+The hydra rolls 5 dice (half of its power factor of 10) for its rangestrikes.
+Because there are two unblocked routes to the centaur (going through either
+C3 or C4), blue can choose which to use (before rolling for the rangestrike).
+One of the routes is over a bramble hex (C4) lowering the skill level of the
+strike. In this case the hydra is not required to rangestrike with maximum
+effectiveness (though it must rangestrike with maximum effectiveness for the
+route chosen).
+
+12.1: Players decide strikes/rangestrikes one at a time. During your
+strike or counterstrike phase you pick the next strike or rangestrike you
+want to take, resolve it and then pick the next strike or rangestrike. This
+continues until all strikes and any desired rangestrikes are resolved.
+
+12.1, 12.2: A player does not have to declare all strikes and rangestrikes for
+this strike phase before resolving any of them. He decides which strike or
+rangestrike he is going to resolve next (including deciding on the strike
+number and number of dice to roll) and resolves it before having to make
+any decisions about his remaining strikes or rangestrikes.
+
+12.2: Players must actually roll the dice for strikes, even when there is
+an extremely small chance of not killing a character. If players do this
+informally to speed play, any player still in the game may object and force
+the roll to be made.
+
+12.2, 12.3: Once a player starts rolling a character's strike (or rangestrike)
+the strike must be completely resolved. You can't concede part way through a
+strike.
+
+12.2, 12.4, 12.5: When determining if carry over is possible you only need
+consider the strike numbers needed and number of dice rolled if the potential
+carry over target had been the original target of the strike (except for
+carrying up dune hexsides). You can only carry over damage if you could have
+struck needing the same or lower strike number and rolled the same number or
+more dice versus the potential carry over target. The fact that there may be
+penalties or benefits being applied toward some, but not all of the targets
+is not relevant. For example a skill 3 character striking down a wall at a
+skill 4 character may carry over damage up a wall to a skill 2 character,
+using a strike number of 4. In order to carry over up a dune hexside the
+initial strike must have been up a dune hexside.
+
+12.4: Carry over is by character. Once you choose to carry over to another
+character you cannot withhold some of the carried over damage. But you do not
+have to continue to another character if there is still remaining damage after
+slaying a carry over target.
+
+12.4: If carried over damage slays a character and there are other legal
+targets for carry over you may carry over to another of these characters.
+This may continue until there is no more damage to carry over or the striking
+player elects not to carry over to any additional targets.
+
+12.4: You are never forced to carry over damage, even if you took a penalty
+(forsaking a benefit is the same as taking a penalty) in order to allow
+carry over.
+
+12.7: Sixes will always hit. There are situations where characters will
+automatically hit with each die rolled (i.e. ones don't always miss).
+
+13.3: If a rangestrike has two possible (unblocked) paths, you may choose to
+take either path (before rolling for the rangestrike) even if the strike
+numbers using each path are different. You use the strike number that applies
+to the path you chose.
+
+13.4: Unlike strikes, rangestrikes are optional. You may take some, all or
+none of your possible rangestrikes.
+
+13.5: It is illegal to rangestrike lords except with warlocks (as opposed
+to a rangestrike which has no chance to do damage). Any attempt to do this
+should be rejected and should not count as using up a character's
+opportunity to rangestrike.
+
+14.0: A defensive reinforcement may enter a battleland in any order relative
+to the other characters moving that maneuver phase.
+
+14.0: Even if you can legally muster a reinforcement during phase 4 of
+a battle, you can decline the reinforcement then and still muster a
+reinforcement after winning the battle, assuming you have room and the
+characters needed to allow the muster survived.
+
+14.1: When you take a defensive reinforcement during a battle, it must enter
+the battleland.  If the mustering player doesn't enter it, the character is
+returned to the caretaker stacks (alive) as if it was never mustered.
+
+14.1: A defensive reinforcement may enter a battleland in any order
+relative to the other characters moving that maneuver phase.
+
+14.2: Note that a defender does not earn the right to muster a reinforcement
+until the attacker ends his first maneuver phase of the battle (other than
+by concession). Also note that leaving all of your characters off the
+battleland is not the same as a concession. In some cases a defender may even
+be forced to lose characters while entering, but not be eligible for a
+reinforcement because the attacker conceded before ending his first maneuver
+phase.
+
+15.0: You may only summon once during your entire engagement phase. You may
+not summon the same angel or archangel more than once per engagement phase.
+You may not summon both an angel and archangel in the same engagement phase.
+
+15.0: Even if you can legally summon an angel or archangel during your
+maneuver phase of a battle, you can decline to make the summons then and
+still summon an angel or archangel after winning the battle, assuming you
+have room and an available angel or archangel to be summoned.
+
+15.0: A summoned angel or archangel may enter a battleland in any order
+relative to the other characters moving that maneuver phase.
+
+15.0, 16.0: Note that the right to summon an angel or archangel does not cause
+a battle to continue after all characters currently in a legion are slain.
+If you are wiped out before you get to summon, the battle is over.
+
+15.1: When you summon an angel or archangel you must show the other players
+the character you are summoning.
+
+15.1: When you summon an angel or archangel during a battle, it must enter the
+battleland. If the summoning player doesn't enter it, the character is
+returned to its original legion as if it was never summoned.
+
+15.3, 19.4: Eliminating a defeated titan's other legions occurs after angel
+summoning for the battle which slew the titan. So that if a legion defeats
+a legion containing a titan, it may not summon an angel that is engaged
+with another legion belonging to that player even though it is about to be
+eliminated.
+
+16.0: A battle will also end at the end of a strike phase if a titan has been
+slain (including being left off).
+
+16.0, 18.0: If all of one side's characters are slain at the end of a strike
+phase a battle will end. Muster and summoning possibilities don't prevent
+a battle from ending at this point.
+
+17.0, 17.3: A player may choose to take an angel instead of an archangel
+when crossing a multiple of 500 points (even if there are still archangels
+available to take). If you take the angel you do not get the archangel
+for this multiple of 500 later.
+
+17.0, 19.4: The decision whether to take an earned angel, archangel or nothing
+for a battle involving a titan elimination must be made before any of the
+eliminated player's legions are made public (for computing half points and
+removal).
+
+18.0: When mustering a tower creature in a tower, a player need only show that
+the recruiting legion has at least one character in it. (If it doesn't it isn't
+a valid legion and should be removed from the board.) You do not have to
+reveal the type of any characters already in the legion, when recruiting a
+tower creature in a tower.
+
+18.1: If the last character of a legion is summoned out of the legion during
+the engagement phase the legion is disbanded, even if it had moved into a
+tower during the current turn. It may not muster since the legion is not there
+for the enlistment phase.
+
+19.0: The game ends when there are zero or one players left. (This occurs
+at the end of the final engagement, so that the winner (if any) can
+acquire angels or defensive musters and scores points for the battle as normal
+for a titan elimination. The winner (if any) does not get any recruits as
+the game is over before th recruit phase occurs.
+
+19.0: The winner's (if any) legions are public and may be examined before the
+game is cleaned up.
+
+19.3, 19.4: If a mutual elimination occurs with exactly one player's titan
+being slain, then the other player will get half points for any characters
+that were not slain in the battle as is normal when a titan is slain. Legion
+markers are also awarded as is normally done.
+
+19.3, 19.4: If two titans are slain in a battle, neither eliminated player
+scores any points (including the case where they have other legions engaged
+with each other). If either player's legions are engaged with any other
+players' legions, these are scored at half points as is normally done. No one
+receives their legion markers.
+
+19.4: The prohibition against recruits in engagements with legions belonging
+to a just eliminated titan refers to a defender's reinforcement during an
+engagement. The player whose turn it is may still muster during the muster
+phase of his turn with any stacks that are otherwise eligible to, regardless
+of whether or not they had been engaged with legions that belonged to an
+eliminated titan.
+
+19.4: After a titan elimination, all half points due each player are awarded
+in one group (including any characters in the eliminated player's Titan stack
+that were not slain in the engagement). Thus rounding is only done once per
+player for that engagement.
+
+19.4: An eliminated player's legions become public at the point they are
+counted for half points or are removed. All such legions belonging to
+players eliminated in the same engagement are revealed simultaneously.
+
+20.0: While there are specific penalties for some illegal actions in Titan,
+this in no way is to be taken as allowance to do illegal actions as long as
+the penalty is suffered. The reason for the penalties is to permit play to
+continue in a fair manner after an inadvertent violation of the rules. Players
+intentionally breaking rules are guilty of unsporting conduct and are to be
+removed from the game (treating them as refusing to play). Also if the
+standard penalty is not fair compensation the tournament director (or if none,
+then a consensus of the other players) may use what he feels is a fair
+penalty.
+
+20.0: Players may specifically lie when making promises about future actions
+or when making some claims about the contents of legions. You cannot lie
+about the size of legions or their public actions (such as moves, recruits
+and remnants after a battle) or anything that happens publicly in the game
+(such as the number of hits on a strike roll).
+
+20.3: If a player rolls too many dice, his opponent in the battle may choose
+to accept the errant roll rather than apply the penalty stated in 20.3 (reroll
+limited to a maximum of the same number of hits).
+
+20.4: Players may only withdraw from the game at specific points in their
+turn. They may not withdraw during their engagement phase.
+
+20.4: If a player refuses to continue a game he will attempt to do the
+first legal action of the following list when it is his turn to act:
+withdraw from the game, flee an engagement, concede an engagement, refuse a
+muster, refuse an angel or archangel for earned points, choose the engagement
+in the lowest numbered land as the next to resolve, refuse to carry over
+damage, refuse to use a mulligan. If the player is part way through his
+movement or maneuver phase, all of the partial movement is undone and the
+player withdraws (movement) or attempts to concede (maneuver) as appropriate.
+
+20.4: If no time limits have been set, deciding what is a refusal to play
+is up to the tournament director, or if there is no tournament director,
+a consensus of the players still in the game. For tournaments and serious
+games, time limits should be set at the start of play.
+
+20.4: Determining what is unsporting conduct is up to the tournament director,
+or if there is no tournament director, a consensus of the players still in the
+game. Treating a player who has acted in an unsporting manner as refusing to
+play is the recommended means of punishment.
+
+20.4: Players may advise each other on possible actions in the game. In order
+to speed play, players should not advise players who do not want advice.
+
+20.4: Players may collude. Extreme collusion may be treated as unsporting
+conduct by some groups. In particular players should not try to throw the
+game to a particular player for reasons outside of the game. Unless agreed
+to otherwise, players in an imminent mutual situation may make and decide
+to keep nonbinding deals that allow one player to survive at the expense
+of the other. If there is a question about whether players' moves or deals
+are ethical the tournament director, if any, should be appraised of the
+situation as soon as possible.
+
+21.0: Players may also agree to place time limits on the time allowed to
+take various actions in the game (typically for play by mail games). The
+standard penalty for failure to complete an action on time should be to
+treat the player as refusing to continue the game.
+
+21.1: If a time limit is used for the entire game it is suggested that the
+player whose turn it is be allowed to finish his turn and then proceed with
+play until each remaining player gets one more full turn (or is eliminated)
+including the player whose turn it was when the time limit was reached.
+
+Badlands: The Fort battleland described in Volume 26, Number 4 of the
+General is not shaded correctly. For this map treat the shaded hexes
+(C2, C5 and D3) as higher (rather than lower) elevation than the other
+hexes on the map (except for the Tree hex).
+
+Simplified Sequence of Play
+
+1 Initial set up
+  1.1 Randomly determine starting towers.
+  1.2 Players choose colors. The player with the lowest tower number chooses
+      first.
+2 Players still in the game take turns in order of starting tower numbers
+  until there are less than two players left. The player with the highest
+  tower number goes first. Play continues with the next highest tower number.
+  2.1 The current player decides on any splits he wishes to make. On a
+      player's first turn he must split 4-4 with exactly one lord (titan
+      or angel) and three creatures in each legion.
+  2.2 The current player rolls a fair six-sided die for his movement roll.
+      On a player's first turn he may use a mulligan to reroll his movement
+      roll once, keeping the new roll.
+  2.3 The current player now moves legions (sequentially). Legions can be
+      moved in any order, but must complete their entire movement before any
+      others are moved. The entry side for all engagements must be decided at
+      this time.
+  2.4 Any split offs left stacked recombine at this point.
+  2.5 The current player resolves engagements choosing which engagement
+      to resolve first and after each engagement is resolved, choosing the
+      next one to resolve.
+    2.5.1 The attacker and defender may look at the other player's legion
+        involved in this engagement.
+    2.5.2 The defender may flee.
+    2.5.3 The attacker and defender may resolve the engagement by negotiation.
+    2.5.4 If there is no negotiated settlement, then a battle will be fought
+          publicly.
+    2.5.5 The defender and attacker alternate battle turns until one side is
+          eliminated or a titan is slain.
+      2.5.5.1 The defender turn
+        2.5.5.1.1 The defender may move any or all of his eligible characters
+                  sequentially. If this is his fourth turn he may enter a
+                  reinforcement if possible.
+        2.5.5.1.2 Drift damage is applied (but slain characters still get to
+                  strike).
+        2.5.5.1.3 The defender now sequentially takes strikes and rangestrikes
+                  until he is finished.
+        2.5.5.1.4 The attacker now sequentially takes counterstrikes until he
+                  is finished.
+        2.5.5.1.5 Remove all slain characters from the battleland.
+        2.5.5.1.6 Check if the battle is ending (one side eliminated or a
+                  titan has been slain).
+      2.5.5.2 The attacker turn
+        2.5.5.2.1 The attacker may move any or all of his eligible characters
+                  sequentially. If this is the first movement phase for the
+                  attacker after the first defending character that entered
+                  the battleland has been slain he may summon an angel or
+                  archangel from another of his unengaged legions.
+        2.5.5.2.2 Drift damage is applied (but slain characters still get to
+                  strike).
+        2.5.5.2.3 The attacker now sequentially takes strikes and rangestrikes
+                  until he is finished.
+        2.5.5.2.4 The defender now sequentially takes counterstrikes until he
+                  is finished.
+        2.5.5.2.5 Remove all slain characters from the battleland.
+        2.5.5.2.6 Check if the battle is ending (one side eliminated, a titan
+                  has been slain, or this is turn 7).
+    2.5.6 The victorious legion (if any), may now muster a reinforcement (if
+          the defender) or summon an angel or archangel (if the attacker) if
+          it hasn't previously in this engagement and is otherwise eligible to
+          do so.
+    2.5.7 Any damaged characters that survived the engagement are fully
+          healed.
+    2.5.8 The victor (if any) receives points (half points if the defender
+          fled) for the other player's characters slain in the engagement
+          (except that no points are awarded if the battle resulted in a time
+          loss) and takes any angels or archangels earned by these points and
+          desired.
+    2.5.9 Any half points earned for other legions owned by players
+          eliminated from the game and any characters in the slain titan's
+          legion that were not slain in this engagement are awarded. These
+          are awarded simultaneously and rounding is done per player rather
+          than per legion.
+    2.5.10 Any eligible slain characters (angels, archangels, warlocks and
+           guardians) are regenerated. Other slain characters are added to
+           the dead piles.
+  2.6 The current player may now muster where eligible to do so.
+  2.7 The current player announces the end of his turn.
+
+Complete Sequence of Play (covering all synchronous actions)
+
+1 Initial set up
+  1.1 Determine the players.
+  1.2 Agree to any time limits (or note those being used in a tournament).
+  1.3 Determine starting towers.
+    1.3.1 Make sets of tower rolls until all players are assigned to a tower.
+      1.3.1.1 Each player not yet assigned to a tower must make a tower roll.
+      1.3.1.2 Make tower assignments where possible.
+  1.4 Determine colors.
+    1.4.1 Each player chooses the color they want or withdraws from the game
+          in ascending order of the tower they are starting in. The player
+          with the lowest numbered tower chooses first.
+  1.5 Distribute legion markers and initial characters to all players.
+  1.6 Each player's point total is set to 0.
+2 The remaining players take turns in descending order of the tower they
+  started in until there are zero or one players remaining in the game.
+  The player with the highest starting tower number goes first.
+  2.1 The current player indicates any splits he is making or withdraws from
+      the game. On a player's first turn he must split 4-4 with exactly one
+      lord in each stack (or withdraw).
+  2.2 The current player rolls a fair six-sided die for his movement roll
+      or withdraws from the game.
+    2.2.1 On a player's first turn he may use a mulligan to reroll his
+          movement roll once, keeping the new roll.
+  2.3 The current player now moves legions (sequentially) or withdraws from
+      the game. Legions can be moved in any order, but must complete their
+      entire movement before any others are moved. The entry side for all
+      engagements must be decided at this time.
+  2.4 Any split offs left stacked recombine at this point.
+  2.5 The current player resolves engagements choosing which engagement
+      to resolve first and after each engagement is resolved, choosing the
+      next one to resolve.
+  2.5.1 The current player (the attacker) may look at the other player's (the
+        defender) legion in the current engagement.
+  2.5.2 The defender may look at the attacker's legion in this engagement.
+  2.5.3 The defender may flee.
+  2.5.3.1 If the defender does not flee, the attacker earns the right to
+          possibly summon an angel or archangel at a later point in the
+          engagement.
+  2.5.4 Negotiations continue as long as players make new proposals.
+    2.5.4.1 The defender may make a set of proposals (including at least one
+            new proposal and no proposals previously made by the attacker),
+            concede, accept a proposal previously made by the attacker, or
+            declare he will be making no more proposals.
+    2.5.4.2 The attacker may make a set of proposals (including at least one
+            new proposal and no proposals previously made by the defender),
+            concede, accept a proposal previously made by the defender, or
+            declare he will be making no more proposals.
+  2.5.5 If one player has declared he will make no more proposals, the
+        other player may accept a proposal previously made by his opponent,
+        concede, or choose to fight the battle out.
+    2.5.5.1 If the defender wins the battle by agreement, he earns the
+            right to a possible reinforcement.
+  2.5.6 If the engagement has not been resolved by flight, concession or
+        agreement by this point the engagement will be resolved by battle.
+    2.5.6.1 Both legions may now be looked at by all remaining players.
+    2.5.6.2 The attacker may concede.
+    2.5.6.3 The defender may concede.
+    2.5.6.4 The defender and attacker alternate battle turns until the
+            battle is resolved (by concession or a successful end of
+            battle check).
+    2.5.6.4.1 The defender turn
+    2.5.6.4.1.1 The defender maneuvers his characters sequentially or attempts
+                to concede. If this is the defender's first battle turn he may
+                leave any or all of his characters off the battleland.
+                Characters left off are slain (and do not trigger angel
+                summoning). If this is the defender's fourth battle turn, he
+                may muster a reinforcement if eligible to do so. Characters
+                may be moved (including entering) in any order, but must
+                complete their movement before any other character is moved.
+    2.5.6.4.1.2 If the defender attempted to concede the attacker may concede
+                instead.
+    2.5.6.4.1.3 Drift damage is applied.
+    2.5.6.4.1.3.1 If drift damage will slay any of the defender's characters,
+                  the attacker has the option to concede before drift damage
+                  is applied.
+    2.5.6.4.1.4 The defender now sequentially takes strikes and rangestrikes
+                until he is finished (at least making all required strikes
+                or attempting to concede).
+    2.5.6.4.1.4.1 The defender may declare a strike, a rangestrike, attempt
+                  to concede, or if legal, declare he is finished with
+                  his strikes/rangestrikes. Any reductions in effectiveness
+                  must be declared at this point (otherwise the most effective
+                  strike/rangestrike legally possible is used against the
+                  target).
+    2.5.6.4.1.4.2 Make the strike or rangestrike roll or attempt to concede.
+    2.5.6.4.1.4.3 If a strike was rolled which resulted in possible carry over,
+                  then this carry over is allocated (possibly to nowhere),
+                  by the defender.
+    2.5.6.4.1.4.4 If the defender attempted to concede the attacker may either
+                  accept the concession or concede himself instead of the
+                  defender.
+    2.5.6.4.1.5 The attacker may unconditionally concede.
+    2.5.6.4.1.6 The attacker now sequentially takes counterstrikes until he
+                is finished (making all required strikes or attempting to
+                concede).
+    2.5.6.4.1.6.1 The attacker may declare a counterstrike, attempt to concede,
+                  or if legal, declare he is finished.
+    2.5.6.4.1.6.2 Make a strike roll or attempt to concede.
+    2.5.6.4.1.6.3 If a strike was rolled which resulted in possible carry over,
+                  then this carry over is allocated (possibly to nowhere),
+                  by the attacker.
+    2.5.6.4.1.6.4 If the attacker attempted to concede the defender may either
+                  accept the concession or concede himself instead of the
+                  attacker.
+    2.5.6.4.1.7 Remove all slain characters from the battleland.
+    2.5.6.4.1.8 Check if the battle is ending (one side eliminated or a titan
+                has been slain).
+    2.5.6.4.1.8.1 If the battle is ending the defender may unconditionally
+                  concede.
+    2.5.6.4.2 The attacker turn
+    2.5.6.4.2.1 The attacker maneuvers his characters sequentially or attempts
+                to concede. If this is the attacker's first battle turn he may
+                leave any or all of his characters off the battleland.
+                Characters left off are slain. If the attacker gets to take his
+                first battle turn and does not attempt to concede in his
+                maneuver phase, then the defender earns the right to an
+                eventual reinforcement, if otherwise eligible to take it. If
+                this is the first attacker turn after the first defending
+                character, that entered the battleland, has been slain, then
+                the attacker may summon an angel or archangel, if otherwise
+                legal to do so. Characters may be moved (including entering)
+                in any order, but must complete their movement before any
+                other character is moved.
+    2.5.6.4.2.2 If the attacker attempted to concede the defender may concede
+                instead.
+    2.5.6.4.2.3 Drift damage is applied.
+    2.5.6.4.2.3.1 If drift damage will slay any of the attacker's characters,
+                  the defender has the option to concede before drift damage
+                  is applied.
+    2.5.6.4.2.4 The attacker now sequentially takes strikes and rangestrikes
+                until he is finished (at least making all required strikes
+                or attempting to concede).
+    2.5.6.4.2.4.1 The attacker may declare a strike, a rangestrike, attempt
+                  to concede, or if legal, declare he is finished with
+                  his strikes/rangestrikes. Any reductions in effectiveness
+                  must be declared at this point (otherwise the most effective
+                  strike/rangestrike legally possible is used against the
+                  target).
+    2.5.6.4.2.4.2 Make the strike or rangestrike roll or attempt to concede.
+    2.5.6.4.2.4.3 If a strike was rolled which resulted in possible carry over,
+                  then this carry over is allocated (possibly to nowhere),
+                  by the attacker.
+    2.5.6.4.2.4.4 If the attacker attempted to concede the defender may either
+                  accept the concession or concede himself instead of the
+                  attacker.
+    2.5.6.4.2.5 The defender may unconditionally concede.
+    2.5.6.4.2.6 The defender now sequentially takes counterstrikes until he
+                is finished (making all required strikes or attempting to
+                concede).
+    2.5.6.4.2.6.1 The defender may declare a counterstrike, attempt to concede,
+                  or if legal, declare he is finished.
+    2.5.6.4.2.6.2 Make a strike roll or attempt to concede.
+    2.5.6.4.2.6.3 If a strike was rolled which resulted in possible carry over,
+                  then this carry over is allocated (possibly to nowhere),
+                  by the defender.
+    2.5.6.4.2.6.4 If the defender attempted to concede the attacker may either
+                  accept the concession or concede himself instead of the
+                  defender.
+    2.5.6.4.2.7 Remove all slain characters from the battleland.
+    2.5.6.4.2.8 Check if the battle is ending (one side eliminated, a titan
+                has been slain, or this is turn 7).
+    2.5.6.4.2.8.1 If the battle is ending the attacker may unconditionally
+                  concede. Conceding at this point preempts a time loss.
+    2.5.6.5 The victorious legion (if any), may now muster a reinforcement
+            (if the defender) or summon an angel or archangel (if the
+            attacker) if it hasn't previously in this engagement and is
+            otherwise eligible to do so.
+    2.5.6.6 Any damaged characters that survived the engagement are fully
+            healed.
+    2.5.6.7 The victorious legion is returned to the master board and is
+            no longer subject to inspection by the other players.
+    2.5.6.8 The victor (if any) receives points (half points if the defender
+            fled) for the other player's characters slain in the engagement
+            (except that no points are awarded if the battle resulted in a
+            time loss) and takes any angels or archangels earned by these
+            points and desired.
+    2.5.6.9 Any half points earned for other legions owned by players
+            eliminated from the game and any characters in the slain titan's
+            legion that were not slain in this engagement are awarded. These
+            are awarded simultaneously and rounding is done per player rather
+            than per legion.
+    2.5.6.10 Any eligible slain characters (angels, archangels, warlocks and
+             guardians) are regenerated. Other slain characters are added to
+             the dead piles.
+    2.6 The current player may now muster where eligible to do so or
+        withdraw from the game.
+    2.7 The current player announces the end of his turn or withdraws
+        from the game.
+3 The contents of any legions belonging to the winning player become public.
+
+Etiquette Guide
+
+0.  Players are encouraged to discuss the etiquette of Titan play before
+    the game begins. Many players are used to playing only with their
+    local group. As a result, habits that they have formed may be quite
+    different from what you consider normal. By discussing etiquette
+    before you begin, many arguments can be avoided.
+
+1.  All play is expected to be honest and should be friendly, even if it
+    gets serious.
+
+2.  All die rolls should be in a box. If a player rolls anywhere else
+    the dice which do not land in the box must be rerolled. (Those dice
+    which landed in the box should first be counted and removed, to avoid
+    confusion.)  Any die that is cocked must be rerolled. Dice that are
+    stacked flat one on top of another count. If any player so requests,
+    rolls will be made from a dice cup.
+
+3.  When rolling a strike or rangestrike all dice should be rolled at
+    one time (large creatures may divide their strikes into two sets)
+    if there are enough dice available.
+
+4.  When rolling, the dice should be left in the box until all players
+    agree how many hits have occurred.
+
+5.  Any player may object to the use of any dice by other players during
+    the game. If a die is allowed, then any player may use it. Any dice
+    used should be true and from 10mm to 16mm (on an edge) in size, unless
+    all players agree to something different.
+
+6.  When examining one of your legions, the legion marker should be left
+    on the masterboard, especially if it is not your turn.
+
+7.  Players should never examine (i.e. remove from the board) more
+    than one legion at a time.
+
+8.  Each player is responsible for his own pieces. Players should
+    generally refrain from handling other players' pieces, especially
+    if another player so requests.
+
+9.  Players may not lie about the number of characters that are in their
+    legions.
+
+10. While moving, player should not flip over their legion markers.
+    Instead, he may rotate them to indicate that they have moved.
+
+11. Players should announce the creatures that they are using to recruit.
+    If any other player requests that the pieces be revealed, then the
+    pieces must be shown.
+
+12. Players should announce their recruits then place their legions back
+    on the masterboard. The caretaker (or one of the other players) will
+    then place the recruit face up on top of the legion. Wait until your
+    turn is complete before concealing your recruits in your legions. Note
+    that recruit announcements may be delayed until after all engagements
+    have been resolved. If recruit announcements are delayed, stacks which
+    actually moved should be marked by turning the legion markers 45 degrees.
+    This is so that later the players will know which legions are eligible
+    to recruit.
+
+13. Players should clearly indicate when their turns have ended.
+    Preferably by saying "Done," or, "Your turn."  If you see a move
+    that you have missed, it may not be corrected without the agreement
+    of all other players. A player is entitled to change or retract any
+    masterboard movement or recruiting until that player has indicated
+    that his turn has ended. (Movement may not be changed once an
+    engagement has been initiated.)
+
+14. Players should wait until all previous engagements are resolved before
+    making their movement roll. (If all players agree, then a player may
+    go ahead and take his turn.)
+
+15. The defender in any engagement should wait for the attacker to examine
+    the defender's legion before looking at the attacker's legion. (This
+    forces the attacker to choose the order that engagements are resolved,
+    and indicates that the attacker's movement phase is over.)
+
+16. Any player may ask about the net result of anything that happened publicly
+    since his previous turn. This includes what was recruited with any
+    legion on the board, and with what characters, any splits that occurred,
+    where legions have moved and the net result of any battles that have
+    occurred since the requester's previous turn (not counting his current
+    turn if it is his turn when he makes the request). Players may not lie
+    when supplying this information.
+
+17. If a player must leave the room to use the restroom, he should wait
+    until his turn is over or until a battle is underway between his
+    opponents. He should request that players continue the game leaving
+    their recruits on top of their legions.
+
+18. Playing Titan well requires attention. Players should refrain from
+    playing in other games at the same time.
+
+19. At the start of the game, each player may state whether or not he
+    wishes to receive advice from the other players during battles. Other
+    players should refrain from giving advice to players who have requested
+    that they not receive advice. Players may request advice from their
+    opponents at any time (even if they previously requested that they did
+    not want to receive advice). Note that you cannot request that no
+    advice be given to your opponent.
+
+20. Titan is a multi-player game, and players should generally be
+    allowed to make their own decisions. Other players are legally
+    entitled to suggest better options or moves, but should generally
+    reserve such kibitzing for situations where they feel it has a
+    significant impact on their own positions. Additionally, players
+    should not harass other players once a suggestion is made and
+    declined.
+
+21. No advice may ever be given by players who are not currently in the
+    game, except on the legal interpretation of the rules and to point
+    out that an illegal move has occurred.
+
+22. Movement on the battleland may be changed until the first strike
+    has been rolled, or the player states that the round has ended (if
+    no strikes are possible). Players who forget to make rangestrikes
+    may take the rangestrikes, if they remember or are reminded before
+    they say they are done, or if their opponent agrees.
+
+23. An illegal move on the battleland will be considered accepted if your
+    opponent has counterstruck. Once a player has accepted an illegal move
+    on the battleland, it will stand. If an illegal move is detected
+    before counterstrikes have started, then the damaged party may require
+    the move to be corrected and the entire strike phase to be repeated.
+
+24. If a player asks for an illegal recruit, and is not able to show the
+    characters to justify that recruit, then that legion may not recruit
+    on that player turn. If the illegal recruitment is corrected before the
+    player has declared the end of his recruitment phase, there is no penalty.
+    (For repeated or intentional offenses the player may be penalized for
+    unsporting conduct.) The legion may change its movement only if the
+    affected player's movement phase has not yet ended (i.e. no battles have
+    been initiated and the player hasn't declared the end of his turn). A
+    legion which is later found to have recruited illegally should in no case
+    be allowed to benefit from the mistake. The tournament director may be
+    required to fairly correct an illegal recruitment that was not caught
+    immediately.
+
+25. If a legion makes an illegal move on the masterboard, then that move
+    must be corrected if identified before the start of the next player
+    turn. An illegal move on the masterboard will be considered accepted
+    after all players (including the offender) have completed their next
+    turn. Repeated occurrences of illegal movement (or any other rules
+    violation) will be dealt with at the discretion of the tournament
+    director.  Penalties may include forfeit of the current game or
+    disqualification from the tournament. If the illegal move is not
+    discovered immediately, the tournament may need to rule on how to correct
+    an illegal move (in cases where the illegal move affected other players'
+    moves). Normally this would require backing up the game to the point
+    of the illegal move.
+
+26. If a battle is left unresolved past the end of a player's turn, the
+    battle must still be resolved. If the immediately following player
+    has begun any engagements (by looking at another player's legion) or
+    if more than one following played has made his movement roll, all actions
+    up to that point should be kept. Otherwise the game should be backed up
+    (undoing splits, musters and possibly cancelling a single movement roll)
+    before resolving the engagement. In any case the attacking player will not
+    be allowed to summon an angel or change his recruiting with any other
+    stacks (he may still adjust his recruit with the legion involved in the
+    engagement if he wins). If the game was not backed up, and there is a
+    shortage of some character type, the players involved cannot preempt
+    musters that occured after the battle should have been resolved.
+
+27. For face to face games, players should generally agree not to use physical
+    memory or strategy aids (such as computers or written records) in order to
+    speed play. Tournament directors should state what the policy on aids is
+    for their tournaments. For play by email games physical record keeping
+    is encouraged. In fact, in order to make this easier for the players,
+    it is recommended that the moderator keep track of public information
+    and supply it upon request. This may be extended to include information
+    derivable from public information as well as explicity available
+    information. At a minimum players should be able to obtain a history
+    of public events and private events they were privy to (other than
+    interplayer communications) since the start of the game, from the
+    moderator.
+
+28. Players should not scrutinize opponents' counters for distinguishing marks
+    (on the front or back) or colors other than to determine the kind of
+    character on an intentionally exposed counter.
+
+29. Players should be considerate when choosing which color they are going
+    to play. Reasonable requests by players to play (or to not have anyone
+    play) particular colors should be honored.
+This page is maintained by Bruno Wolff III on wolff.to.
+A secure version of this page is located at: https://wolff.to/titan/errata.shtml
