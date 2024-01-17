@@ -263,7 +263,7 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
         const doff = [0, 1, 4, d + Math.floor(d / 3) * 3, [1,4,0,5,][m], [4,0,1,2,0][m], 0][n];
         const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
         hex.rcText.text += `-r${n}`
-        this.setTerrain(hex, id, k, topDir);
+        this.setTerrain(hex, id, topDir);
 
         const exitsAry = this.exits[n0];  // cycle through this array of Moves
         const exits = exitsAry[k % exitsAry.length]; // allowed moves from hex
@@ -281,7 +281,7 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
 
         const doff = [1, 1, 5, 1, 1, 1, 5][n];
         const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
-        this.setTerrain(hex, id, -nl, topDir);
+        this.setTerrain(hex, id, topDir);
 
         const exitsAry = this.exits[5];  // cycle through this array of Moves
         const exits = exitsAry[n % exitsAry.length]; // allowed moves from hex
@@ -293,11 +293,11 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
   }
 
   /** set color, distText, and top-mark on hex, based on Id
+   * @param hex
    * @param id the designated TerrId
-   * @param ring identifies which ring is being placed, < 0 for edge strips.
    * @param topDir identifies edge at top of BattleMap
    */
-  setTerrain(hex: TitanHex, id: TerrId, ring = 0, topDir: NsDir = 'N') {
+  setTerrain(hex: TitanHex, id: TerrId, topDir: NsDir = 'N') {
     const color = this.terrainColor[id], hexType = hex?.hexType, tname = TitanMap.terrainNames[id] ?? 'Black';
     // console.log(stime(this, '.labelHexes'), { k: ring, id, color, hexType, hexid: hex?.Aname, hex });
     if (hex === undefined) debugger;
@@ -343,7 +343,6 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
   }
   terrainColor = this.terrainColorOrig;
 
-  ids: 'U' | 'N' | 'M' | 'K' | 'P' | 'D' | 'W' | 'H' | 'T' | 'B' | 'J' ;
   // step = 'N', startDir = 'ES'
   rings: TerrId[][] = [
     ['U', 'N'], // [u, n] * 3
