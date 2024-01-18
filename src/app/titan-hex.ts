@@ -72,7 +72,7 @@ class TG {
   static tl = 0.02;
   static ic = C.grey;
   static x0 = -.3;
-  static image = false;
+  static image = true;
 }
 
 /** Graphics for exit arrows */
@@ -241,12 +241,24 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
     })
     this.addBackgroundHex()
     this.labelHexes();
+    this.countTerrIds(hexAry);
     return hexAry;
+  }
+
+  countTerrIds(hexAry: T[]) {
+    let c = 0;
+    const terrids: { [key in TerrId]?: number } = {};
+    hexAry.forEach(hex => {
+      c++;
+      const tid = hex.terrId;
+      terrids[tid] = (terrids[tid] ?? 0) + 1;
+    });
+    console.log(stime(this, `.lableHex: ${c}`), JSON.stringify(terrids).replace(/"/g, ''));
   }
 
   labelHexes() {
     // let sn = 1; .slice(sn, sn + 1) + sn
-    this.rings.forEach((ring, n0) => {
+    TitanMap.rings.forEach((ring, n0) => {
       /** n is the ring to do; rings[n0] drive ringWalk(n)*/
       let n = n0 + 1;  // n is ring to do; rings[n0] drive ringWalk(n)
       let d = 0;       // d is which ring element: 0..2n -1 (2 lines! 2 dirs!)
@@ -265,7 +277,7 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
         hex.rcText.text += `-r${n}`
         this.setTerrain(hex, id, topDir);
 
-        const exitsAry = this.exits[n0];  // cycle through this array of Moves
+        const exitsAry = TitanMap.exits[n0];  // cycle through this array of Moves
         const exits = exitsAry[k % exitsAry.length]; // allowed moves from hex
         hex.addExits(exits, diri);
 
@@ -274,7 +286,7 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
     })
     const dirs: NsDir[][] = [['EN', 'ES'], ['ES', 'S'], ['S', 'WS'], ['WS', 'WN'], ['WN', 'N'], ['N', 'EN']];
     let hex = this[1][3] as any as TitanHex;  // upper-left corner
-    this.edge.forEach((line, nl) => {
+    TitanMap.ring5.forEach((line, nl) => {
       line.forEach((id, n) => {
         const dir = dirs[nl][n % 2];
         const diri = H.nsDirs.indexOf(dir as NsDir); // [N, EN, ES, S, WS, WN]
@@ -283,7 +295,7 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
         const topDir = H.nsDirs[(diri + doff) % 6]; // turn right ...
         this.setTerrain(hex, id, topDir);
 
-        const exitsAry = this.exits[5];  // cycle through this array of Moves
+        const exitsAry = TitanMap.exits[5];  // cycle through this array of Moves
         const exits = exitsAry[n % exitsAry.length]; // allowed moves from hex
         if (!hex.exits) hex.addExits(exits, nl);
 
@@ -298,7 +310,8 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
    * @param topDir identifies edge at top of BattleMap
    */
   setTerrain(hex: TitanHex, id: TerrId, topDir: NsDir = 'N') {
-    const color = this.terrainColor[id], hexType = hex?.hexType, tname = TitanMap.terrainNames[id] ?? 'Black';
+    const color = this.terrainColor[id], tname = TitanMap.terrainNames[id] ?? 'Black';
+    const hexType = hex?.hexType;
     // console.log(stime(this, '.labelHexes'), { k: ring, id, color, hexType, hexid: hex?.Aname, hex });
     if (hex === undefined) debugger;
     if (id === 'K' && hexType !== 'B') debugger;
@@ -333,38 +346,27 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
     P: 'Plains', J: 'Jungle', B: 'Brush', M: 'Marsh', S: 'Swamp', D: 'Desert',
     U: 'Tundra', T: 'Tower', W: 'Woods', H: 'Hills', N: 'Mountains',
   }
-  terrainColorColossus = {
+  static terrainColorColossus = {
     P: 'yellow', J: 'darkgreen', B: 'lime', M: 'indianred', S: 'blue', D: '#FFA200',
     U: 'skyblue', T: 'lightgrey', W: 'olive', H: 'brown', N: 'red', K: 'BLACK', // redbrown, transparent
   }
-  terrainColorOrig = {
+  static terrainColorOrig = {
     P: 'gold', J: 'limegreen', B: '#BACD32', M: 'peru', S: 'skyblue', D: 'darkorange', //'#FFA200',
     U: '#D0D0F0', T: '#E0E0D0', W: '#DDD88A', H: 'saddlebrown', N: '#FF343C', K: 'BLACK', // redbrown, transparent
   }
-  terrainColor = this.terrainColorOrig;
+  terrainColor = TitanMap.terrainColorOrig;
 
   // step = 'N', startDir = 'ES'
-  rings: TerrId[][] = [
+  static rings: TerrId[][] = [
     ['U', 'N'], // [u, n] * 3
     ['M', 'K', 'P', 'K'],  // r2: [mk,pk] * 3
     ['K', 'D', 'W', 'K', 'S', 'H'], // r3: [kdw, ksh] * 3
     ['T', 'P', 'K', 'B', 'T', 'M', 'K', 'B'],  // r4: [tpkb,tmkb] * 3
     ['M', 'K', 'J', 'H', 'K', 'P', 'K', 'J', 'W', 'K'],  // r5: [mkjhk,pkjwk] * 3
-    // r6: [ksmkmb,kjbkpb,kdbkmb,ksbkpb,kjbkmb,kdbkpb] Use this.edge to fill outer rings.
+    // ring5: [ksmkmb,kjbkpb,kdbkmb,ksbkpb,kjbkmb,kdbkpb] Use this.edge to fill outer rings.
   ];
-  // 1: Block, 2: Arch, 3: Arrow, 4: tri-arrow
-  /** exits for each hex in rings; pattern repeats for each line */
-  exits: Exits[][] = [
-    [{ WS: 1, N: 3, ES: 3 }], // rotate dirs each line segment!
-    [{ EN: 2, S: 4 }, {}],
-    [{}, { N: 2, ES: 4 }, {S: 2, WN: 4}],
-    [{ N: 3, ES: 3, WS: 3 }, { S: 2, EN: 4 }, {}, { N: 2, WS: 4 }],
-    [{ EN: 2, WN: 4 }, {}, { WS: 1, ES: 4 }, { WN: 1, S: 4 }, {}],
-    // #5 for all edge lines:
-    [{ EN: 4 }, { ES: 4 }, { EN: 4, S: 2 }, { ES: 4 }, { EN: 4, S: 4 }, { ES: 4 }, { EN: 4, S: 2 }],
-  ]
-  // r7: [...pd...,...ms...,...pj...,...md...,...pw...,...mj...]
-  edge: TerrId[][] = [
+  // r5: [...pd...,...ms...,...pj...,...md...,...pw...,...mj...]
+  static ring5: TerrId[][] = [
     ['M', 'J', 'P', 'B', 'M', 'S', 'B', ], // en,es
     ['P', 'D', 'M', 'B', 'P', 'J', 'B', ], // s,es
     ['M', 'S', 'P', 'B', 'M', 'D', 'B', ], // ws,s
@@ -372,7 +374,19 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
     ['M', 'D', 'P', 'B', 'M', 'J', 'B', ], // n,wn
     ['P', 'S', 'M', 'B', 'P', 'D', 'B', ], // en,n
   ];
-  canonical: {[key: number]: [number, number]} = {
+  // 1: Block, 2: Arch, 3: Arrow, 4: tri-arrow
+  /** exits for each hex in rings; pattern repeats for each line */
+  static exits: Exits[][] = [
+    [{ WS: 1, N: 3, ES: 3 }], // rotate dirs each line segment!
+    [{ EN: 2, S: 4 }, {}],
+    [{}, { N: 2, ES: 4 }, {S: 2, WN: 4}],
+    [{ N: 3, ES: 3, WS: 3 }, { S: 2, EN: 4 }, {}, { N: 2, WS: 4 }],
+    [{ EN: 2, WN: 4 }, {}, { WS: 1, ES: 4 }, { WN: 1, S: 4 }, {}],
+    // #5 for all ring5 (outer edge) lines:
+    [{ EN: 4 }, { ES: 4 }, { EN: 4, S: 2 }, { ES: 4 }, { EN: 4, S: 4 }, { ES: 4 }, { EN: 4, S: 2 }],
+  ]
+  /** get Hex location from canonical ident number. */
+  static canonicalLoc: {[key: number]: [number, number]} = {
     1: [8, 7], 2: [9, 8], 3: [10, 8], 4: [10, 9], 5: [10, 10], 6: [9, 10], 7: [8, 9],
     8: [7, 9], 9: [7, 10], 10: [7, 11], 11: [7, 12], 12: [6, 12], 13: [5, 11], 14: [6, 10],
     15: [5, 9], 16: [4, 9], 17: [4, 10], 18: [3, 10], 19: [2, 9], 20: [3, 8], 21: [4, 8],
@@ -389,10 +403,11 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
     140: [12, 2], 141: [11, 5], 142: [12, 6],
     1000: [7,7], 2000:[7,8], 3000:[6,8], 4000:[5,7], 5000:[6,6], 6000:[7,6],
   }
+  /** get canonical ident number from Titan hex location. */
   getHexid(hex: TitanHex) {
-    const { row, col } = hex, canon = this.canonical;
-    for (let key in canon) {
-      const [r, c] = canon[key];
+    const { row, col } = hex, loc = TitanMap.canonicalLoc;
+    for (let key in loc) {
+      const [r, c] = loc[key];
       if (r === row && c === col) return key
     }
     return -1;
