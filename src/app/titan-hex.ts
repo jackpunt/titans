@@ -429,7 +429,7 @@ export class TitanMap<T extends Hex & TitanHex> extends HexMap<T> {
 
   addBackgroundHex(color = GS.bgHexColor) {
     const ch = this.mapCont.hexMap.centerHex;
-    const hexMapBG = new HexShape((TP.nHexes * 1.8) * TP.hexRad, this.topoRot);
+    const hexMapBG = new HexShape((TP.nHexes * 1.8) * TP.hexRad);
     hexMapBG.x = ch.x; hexMapBG.y = ch.y;
     hexMapBG.paint(color);
     this.mapCont.hexCont.addChildAt(hexMapBG, 0);

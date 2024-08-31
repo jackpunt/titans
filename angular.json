@@ -63,7 +63,8 @@
               "browserTarget": "titans:build:production"
             },
             "development": {
-              "browserTarget": "titans:build:development", "port": 4203
+              "port": 4206,
+              "browserTarget": "titans:build:development"
             }
           },
           "defaultConfiguration": "development"
